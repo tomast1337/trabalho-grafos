@@ -3,6 +3,8 @@ import { Edge } from "./edge";
 export class GNode<T> {
   public data: T;
   public neighbors: Map<GNode<T>, number>;
+  public color?: string;
+  public position?: [number, number];
 
   constructor(data: T) {
     this.data = data;
