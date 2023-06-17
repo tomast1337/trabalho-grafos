@@ -9,7 +9,7 @@ export class GNode<T> {
     this.neighbors = new Map<GNode<T>, number>();
   }
 
-  public addNeighbor(neighbor: GNode<T>, weight: number = 1) {
+  public addNeighbor(neighbor: GNode<T>, weight = 1) {
     this.neighbors.set(neighbor, weight);
   }
 
@@ -37,5 +37,3 @@ export class GNode<T> {
     return this.neighbors.get(neighbor);
   }
 }
-
-export const example = () => {};

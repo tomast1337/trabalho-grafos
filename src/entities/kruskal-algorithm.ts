@@ -58,37 +58,3 @@ export class KruskalAlgorithm<T> {
     return result;
   }
 }
-
-export const example = () => {
-  // Example usage
-  const graph = new Graph<string>();
-
-  // Add nodes
-  graph.addNode("A");
-  graph.addNode("B");
-  graph.addNode("C");
-  graph.addNode("D");
-  graph.addNode("E");
-
-  // Add weighted edges
-  graph.addEdge("A", "B", 4);
-  graph.addEdge("A", "C", 1);
-  graph.addEdge("B", "C", 3);
-  graph.addEdge("B", "D", 2);
-  graph.addEdge("D", "E", 3);
-  graph.addEdge("C", "D", 4);
-  graph.addEdge("C", "E", 2);
-
-  const kruskal = new KruskalAlgorithm<string>();
-  const minimumSpanningTree = kruskal.kruskalMST(graph);
-
-  // Print the minimum spanning tree
-  console.log("Minimum Spanning Tree:");
-  for (const node of minimumSpanningTree.getNodes()) {
-    const neighbors = node.getNeighbors();
-    for (const neighbor of neighbors) {
-      const weight = node.getWeight(neighbor);
-      console.log(`${node.data} -- ${weight} -- ${neighbor.data}`);
-    }
-  }
-};

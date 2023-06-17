@@ -1,8 +1,6 @@
 import rough from "roughjs";
-import * as fs from "fs";
 import { Graph } from "./graph";
 import { GNode } from "./node";
-import { DOMImplementation, XMLSerializer } from "xmldom";
 import { RoughSVG } from "roughjs/bin/svg";
 import { RandomSeed, create } from "random-seed";
 import { Edge } from "./edge";
@@ -13,18 +11,14 @@ export class GraphDrawer<T> {
   private document: Document;
   private rand: RandomSeed;
 
-  private nodeRadius: number = 20;
-  private edgeColor: string = "#333333";
+  private nodeRadius = 20;
+  private edgeColor = "#333333";
   private width: number;
   private height: number;
 
   private nodePositions: Map<T, [number, number]> = new Map();
 
-  constructor(
-    width: number = 800,
-    height: number = 600,
-    seed: string = "seed"
-  ) {
+  constructor(width = 800, height = 600, seed = "seed") {
     const document = new DOMImplementation().createDocument(
       "http://www.w3.org/1999/xhtml",
       "html",
@@ -185,40 +179,4 @@ export class GraphDrawer<T> {
     elemEd.textContent = edge.weight.toString();
     this.svgNode.appendChild(elemEd);
   }
-
-  public save(fileName: string) {
-    // write to file
-    fs.writeFileSync(fileName, this.getStringData());
-  }
-  public getStringData(): string {
-    // write to string
-    const xmlSerializer = new XMLSerializer();
-    let xml = xmlSerializer.serializeToString(this.svgNode);
-    return xml;
-  }
 }
-
-export const example = () => {
-  // Example usage
-  const graph = new Graph<string>();
-  const seed = process.cpuUsage().user;
-  const rand = create(seed.toString());
-
-  // Add nodes
-  Array.from(Array(25).keys()).forEach((i) => {
-    graph.addNode(rand(100).toString());
-  });
-
-  // Add edges
-  Array.from(Array(20).keys()).forEach((i) => {
-    try {
-      const node = graph.getNodes()[i];
-      const randNeighbor = graph.getNodes()[rand(graph.getNodes().length)];
-      graph.addEdge(node.data, randNeighbor.data, rand.intBetween(1.0, 10.0));
-    } catch (e) {
-      // pass
-    }
-  });
-  // Draw graph
-  new GraphDrawer<string>().drawGraph(graph).save("graph.svg");
-};

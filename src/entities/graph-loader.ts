@@ -1,4 +1,3 @@
-import * as fs from "fs";
 import { Graph } from "./graph";
 
 export class GraphLoader {
@@ -8,13 +7,40 @@ export class GraphLoader {
 
       const graph = new Graph<string>();
 
-      for (const line of lines) {
-        const [node1, node2, weight] = line.split(" ");
+      let node1: string;
+      let node2: string;
+      let weight: number;
 
+      for (const line of lines) {
+        const data = line.split(" ");
+        console.log(data);
+        if (data.length == 3) {
+          const symbols = data.map((x: string) => x.trim()) as [
+            string,
+            string,
+            string
+          ];
+          try {
+            weight = parseFloat(symbols[2]);
+          } catch (error) {
+            throw new Error("Invalid line format");
+          }
+          node1 = symbols[0].toString();
+          node2 = symbols[1].toString();
+        } else if (data.length == 2) {
+          [node1, node2] = data.map((x) => x.trim());
+          weight = 1;
+        } else if (data.length == 1) {
+          const singleNode = data[0].trim();
+          graph.addNode(singleNode);
+          continue;
+        } else {
+          throw new Error("Invalid line format");
+        }
         if (node1 && node2 && weight) {
           graph.addNode(node1);
           graph.addNode(node2);
-          graph.addEdge(node1, node2, parseInt(weight));
+          graph.addEdge(node1, node2, weight);
         }
       }
       return graph;
@@ -22,28 +48,4 @@ export class GraphLoader {
       throw new Error(`Error loading graph from text: ${error}`);
     }
   }
-  public loadFromFile(filePath: string): Graph<string> {
-    try {
-      const text = fs.readFileSync(filePath, "utf8");
-      return this.loadFromText(text);
-    } catch (error) {
-      throw new Error(`Error loading file ${filePath}: ${error}`);
-    }
-  }
 }
-
-export const example = () => {
-  const graphLoader = new GraphLoader();
-
-  const loadedGraph = graphLoader.loadFromText(`
-        A B 4
-        A C 1
-        B C 3
-        B D 2
-    `);
-
-  if (loadedGraph) {
-    // Use the loaded graph as needed
-    console.log("Loaded graph:", loadedGraph);
-  }
-};

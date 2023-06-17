@@ -10,7 +10,7 @@ export class Graph<T> {
   public addNode(data: T) {
     // check if node already exists
     if (this.nodes.has(data)) {
-        return;
+      return;
     }
     const newNode = new GNode<T>(data);
     this.nodes.set(data, newNode);
@@ -32,7 +32,7 @@ export class Graph<T> {
     }
   }
 
-  public addEdge(data1: T, data2: T, weight: number = 1) {
+  public addEdge(data1: T, data2: T, weight = 1) {
     const node1 = this.nodes.get(data1);
     const node2 = this.nodes.get(data2);
 
@@ -82,38 +82,3 @@ export class Graph<T> {
       .join("\n");
   }
 }
-
-export const example = () => {
-  const graph = new Graph<string>();
-
-  // Add nodes
-  graph.addNode("A");
-  graph.addNode("B");
-  graph.addNode("C");
-
-  // Add edges
-  graph.addEdge("A", "B", 10);
-  graph.addEdge("A", "C", 20);
-  graph.addEdge("B", "C", 30);
-
-  // Remove node
-  graph.removeNode("A");
-
-  // Remove edge
-
-  graph.removeEdge("B", "C");
-
-  // Get node
-
-  const node = graph.getNode("B");
-
-  // Get all nodes
-
-  const nodes = graph.getNodes();
-
-  // Print nodes
-
-  for (const node of graph.getNodes()) {
-    console.log(node.data);
-  }
-};
