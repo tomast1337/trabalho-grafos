@@ -14,6 +14,7 @@ export class GraphDrawer<T> {
   private rc: RoughCanvas;
   private random: RandomSeed;
   private radius = 15;
+  private renderHandler: number | null = null;
 
   constructor(graph: Graph<T>, canvas: HTMLCanvasElement, seed = "seed") {
     this.graph = graph;
@@ -23,8 +24,8 @@ export class GraphDrawer<T> {
     this.random = create(seed);
     for (const node of this.graph.getNodes()) {
       node.position = [
-        this.random.intBetween(this.radius * 2, 500 - this.radius * 2),
-        this.random.intBetween(this.radius * 2, 500 - this.radius * 2),
+        250, //this.random.intBetween(this.radius * 2, 500 - this.radius * 2),
+        250, //this.random.intBetween(this.radius * 2, 500 - this.radius * 2),
       ];
 
       node.color = getRandColor(this.random);
@@ -70,12 +71,12 @@ export class GraphDrawer<T> {
     const [x2, y2] = edge.node2.position || [0, 0];
     const color = edge.color || "black";
     const weight = edge.weight || 1;
-    rc.line(x1, y1, x2, y2, { roughness: 0.5, stroke: color });
+    rc.line(x1, y1, x2, y2, { roughness: 2, stroke: color });
     const [dx, dy] = [x2 - x1, y2 - y1];
     const [d, theta] = [Math.sqrt(dx * dx + dy * dy), Math.atan2(dy, dx)];
     const [x, y] = [
-      x1 + (Math.cos(theta) * d) / 2,
-      y1 + (Math.sin(theta) * d) / 2,
+      x1 + (Math.cos(theta) * d) / 2 + this.random.intBetween(-1, 1),
+      y1 + (Math.sin(theta) * d) / 2 + this.random.intBetween(-1, 1),
     ];
     context.font = "20px Arial";
     context.fillStyle = "black";
@@ -94,60 +95,71 @@ export class GraphDrawer<T> {
   }
 
   private updateNodesPosition() {
-    const newPositions = [] as Array<[number, number]>;
+    const newPositions: [number, number][] = [];
+    const k = 5; // Repulsion factor
+    const c = 10; // Attraction factor
+    const threshold = this.radius * 4; // minimum distance between nodes
+    const canvasWidth = this.canvas.width;
+    const canvasHeight = this.canvas.height;
+
     for (const node of this.graph.getNodes()) {
-      // get all neighbors position
       const neighbors = node.getNeighbors();
-      const neighborsPosition = neighbors.map((neighbor) => {
-        return neighbor.position || [0, 0];
-      });
-      // calculate a new position, moving towards the average of the neighbors, with a random offset, and mantaining a distance of 2 * radius
-      const [x, y] = node.position || [0, 0];
-      const [x1, y1] = neighborsPosition.reduce(
-        (acc, curr) => [acc[0] + curr[0], acc[1] + curr[1]],
-        [0, 0]
+      const neighborsPosition = neighbors.map(
+        (neighbor) => neighbor.position || [0, 0]
       );
-      const [x2, y2] = [
-        x1 / neighborsPosition.length,
-        y1 / neighborsPosition.length,
-      ];
-      const [dx, dy] = [x2 - x, y2 - y];
-      const [d, theta] = [Math.sqrt(dx * dx + dy * dy), Math.atan2(dy, dx)];
-      let [newX, newY] = [x + Math.cos(theta) * d, y + Math.sin(theta) * d];
-      const [randX, randY] = [
-        this.random.intBetween(-10, 10),
-        this.random.intBetween(-10, 10),
-      ];
-      [newX, newY] = [newX + randX, newY + randY];
-      if (newX > 500) {
-        newX = 500;
-      }
-      if (newX < 0) {
-        newX = 0;
-      }
-      if (newY > 500) {
-        newY = 500;
-      }
-      if (newY < 0) {
-        newY = 0;
-      }
-      // check if the new position is too close to another node
-      for (const [x, y] of newPositions) {
-        const [dx, dy] = [newX - x, newY - y];
-        const [d, theta] = [Math.sqrt(dx * dx + dy * dy), Math.atan2(dy, dx)];
-        if (d < this.radius * 3) {
-          [newX, newY] = [
-            x + Math.cos(theta) * this.radius * 2,
-            y + Math.sin(theta) * this.radius * 2,
-          ];
+
+      const [x, y] = node.position || [0, 0];
+      let [dx, dy] = [0, 0];
+
+      // Apply repulsion force from other nodes
+      for (const otherNode of this.graph.getNodes()) {
+        if (otherNode !== node) {
+          const [nx, ny] = otherNode.position || [0, 0];
+          const distance = Math.max(
+            this.radius * 4,
+            Math.sqrt((nx - x) ** 2 + (ny - y) ** 2)
+          );
+          const force = k / distance;
+          dx += ((x - nx) / distance) * (force * 1000);
+          dy += ((y - ny) / distance) * (force * 1000);
         }
       }
 
-      const [finalX, finalY] = [newX, newY];
-      newPositions.push([finalX, finalY]);
+      // Apply attraction force towards neighbors
+      for (const [nx, ny] of neighborsPosition) {
+        const distance = Math.max(
+          this.radius,
+          Math.sqrt((nx - x) ** 2 + (ny - y) ** 2)
+        );
+        const force = c * distance;
+        if (distance < threshold) {
+          dx += ((nx - x) / distance) * force;
+          dy += ((ny - y) / distance) * force;
+        }
+      }
+      // apply repulsion force from canvas border
+      const distanceFromBorder = Math.min(
+        x,
+        y,
+        canvasWidth - x,
+        canvasHeight - y
+      );
+      const force = k / distanceFromBorder;
+      dx += ((x - canvasWidth / 2) / distanceFromBorder) * force;
+      dy += ((y - canvasHeight / 2) / distanceFromBorder) * force;
+
+      dy += this.random.floatBetween(-1, 1);
+      dx += this.random.floatBetween(-1, 1);
+      // Update node position
+      let [newX, newY] = [x + dx, y + dy];
+      newX = Math.max(this.radius, Math.min(newX, canvasWidth - this.radius));
+      newY = Math.max(this.radius, Math.min(newY, canvasHeight - this.radius));
+      newPositions.push([newX, newY]);
     }
+
+    const nodes = this.graph.getNodes();
     for (let i = 0; i < newPositions.length; i++) {
-      const node = this.graph.getNodes()[i];
+      const node = nodes[i];
       node.position = newPositions[i];
     }
   }
@@ -157,5 +169,21 @@ export class GraphDrawer<T> {
       this.updateNodesPosition();
     }
     this.draw();
+    this.renderHandler = requestAnimationFrame(() => this.renderLoop());
+  }
+
+  public stop() {
+    cancelAnimationFrame(this.renderHandler as number);
+  }
+
+  private async renderLoop() {
+    this.updateNodesPosition();
+    this.draw();
+    await new Promise((resolve) => setTimeout(resolve, 10));
+    this.renderHandler = requestAnimationFrame(() => this.renderLoop());
+  }
+
+  public setGraph(graph: Graph<T>) {
+    this.graph = graph;
   }
 }

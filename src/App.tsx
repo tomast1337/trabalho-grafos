@@ -24,8 +24,8 @@ const App = () => {
   );
 
   const [seed, setSeed] = useState<string>("seed");
-
   const [graph, setGraph] = useState<Graph<string> | null>(null);
+  const [drawer, setDrawer] = useState<GraphDrawer<string> | null>(null);
 
   const carregar = async () => {
     if (mododeOperacao === "string") {
@@ -48,12 +48,21 @@ const App = () => {
   const loadGraph = (data: string) => {
     const loader = new GraphLoader();
     let graph;
+    if (drawer) {
+      drawer.stop();
+    }
+
     try {
       graph = loader.loadFromText(data);
       setMessage("");
       setGraph(graph);
     } catch (e: any) {
       setMessage(e.message || "Erro desconhecido");
+    }
+    if (graph && canvasCurrent) {
+      const d = new GraphDrawer<string>(graph, canvasCurrent, seed);
+      d.start();
+      setDrawer(d);
     }
     setIsLoaded(true);
   };
@@ -121,7 +130,7 @@ const App = () => {
     () => {
       if (canvasCurrent && graph) {
         const drawer = new GraphDrawer<string>(graph, canvasCurrent, seed);
-        drawer.start(0);
+        drawer.start();
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
