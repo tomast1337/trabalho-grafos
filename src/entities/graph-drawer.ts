@@ -84,7 +84,12 @@ export class GraphDrawer<T> {
   private draw() {
     const nodes = this.graph.getNodes();
     const edges = this.graph.getEdges();
+
+    // clear canvas
+    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    // draw edges
     this.drawEdges(edges);
+    // draw nodes
     this.drawNodes(nodes);
   }
 
