@@ -13,7 +13,6 @@ export class GraphLoader {
 
       for (const line of lines) {
         const data = line.split(" ");
-        console.log(data);
         if (data.length == 3) {
           const symbols = data.map((x: string) => x.trim()) as [
             string,
