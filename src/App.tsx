@@ -1,8 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { GraphLoader } from "./entities/graph-loader";
 import { GraphDrawer } from "./entities/graph-drawer";
+import { Graph } from "./entities/graph";
+import { PrimAlgorithm } from "./entities/prim-algorithm";
+import { KruskalAlgorithm } from "./entities/kruskal-algorithm";
 
 const App = () => {
+  const [message, setMessage] = useState("");
   const [mododeOperacao, setModoDeOperacao] = useState<"arquivo" | "string">(
     "string"
   );
@@ -14,13 +18,14 @@ const App = () => {
 4 5
 1 5`);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [message, setMessage] = useState("");
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [canvasCurrent, setCanvasCurrent] = useState<HTMLCanvasElement | null>(
     null
   );
 
   const [seed, setSeed] = useState<string>("seed");
+
+  const [graph, setGraph] = useState<Graph<string> | null>(null);
 
   const carregar = async () => {
     if (mododeOperacao === "string") {
@@ -40,21 +45,66 @@ const App = () => {
       }
     }
   };
-
   const loadGraph = (data: string) => {
     const loader = new GraphLoader();
     let graph;
     try {
       graph = loader.loadFromText(data);
       setMessage("");
+      setGraph(graph);
     } catch (e: any) {
       setMessage(e.message || "Erro desconhecido");
     }
-    if (canvasCurrent && graph) {
-      const drawer = new GraphDrawer<string>(graph, canvasCurrent, "seed");
-      drawer.start(0);
-    }
     setIsLoaded(true);
+  };
+  const saveGraph = () => {
+    if (graph) {
+      const data = graph.save();
+      const blob = new Blob([data], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "graph.txt";
+      a.click();
+    } else {
+      setMessage("No graph to save");
+    }
+  };
+  const runKruskal = () => {
+    if (graph) {
+      const prim = new KruskalAlgorithm<string>();
+      const newGraph = prim.kruskalMST(graph);
+      setGraph(newGraph);
+    } else {
+      setMessage("No graph to get MTS (Kruskal)");
+    }
+  };
+  const runPrim = () => {
+    if (graph) {
+      const prim = new PrimAlgorithm<string>();
+      const newGraph = prim.primMST(graph);
+      setGraph(newGraph);
+    } else {
+      setMessage("No graph to get MTS (Prim)");
+    }
+  };
+  const runMeanDistance = () => {
+    if (graph) {
+    } else {
+      setMessage("No graph to get mean distance");
+    }
+  };
+  const runBFS = () => {
+    if (graph) {
+    } else {
+      setMessage("No graph to run BFS");
+    }
+  };
+  const runDFS = () => {
+    if (graph) {
+    } else {
+      setMessage("No graph to run DFS");
+    }
   };
 
   useEffect(() => {
@@ -63,6 +113,16 @@ const App = () => {
     }
   }, [canvasRef]);
 
+  useEffect(
+    () => {
+      if (canvasCurrent && graph) {
+        const drawer = new GraphDrawer<string>(graph, canvasCurrent, seed);
+        drawer.start(0);
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [graph, canvasCurrent]
+  );
   return (
     <main>
       <h1 className="text-5xl text-center font-bold">Trabalho grafo</h1>
@@ -176,24 +236,42 @@ const App = () => {
               </div>
             </label>
             <div className="grid grid-cols-3 gap-4 w-full mb-5">
-              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                onClick={runKruskal}
+              >
                 get MTS (Kruskal)
               </button>
-              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                onClick={runPrim}
+              >
                 get MTS (Prim)
               </button>
-              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                onClick={runMeanDistance}
+              >
                 get mean distance
               </button>
-              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                onClick={runBFS}
+              >
                 BFS
               </button>
-              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                onClick={runDFS}
+              >
                 DFS
               </button>
-              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                onClick={saveGraph}
+              >
                 Save graph
-                </button>
+              </button>
             </div>
           </div>
         </section>
