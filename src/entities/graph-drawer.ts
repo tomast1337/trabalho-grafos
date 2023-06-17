@@ -4,179 +4,153 @@ import { GNode } from "./node";
 import { RoughSVG } from "roughjs/bin/svg";
 import { RandomSeed, create } from "random-seed";
 import { Edge } from "./edge";
+import { RoughCanvas } from "roughjs/bin/canvas";
+import { getRandColor } from "../utils/color";
 
 export class GraphDrawer<T> {
-  private svgNode: SVGElement;
-  private roughSVG: RoughSVG;
-  private document: Document;
-  private rand: RandomSeed;
+  private graph: Graph<T>;
+  private canvas: HTMLCanvasElement;
+  private context: CanvasRenderingContext2D;
+  private rc: RoughCanvas;
+  private random: RandomSeed;
+  private radius = 15;
 
-  private nodeRadius = 20;
-  private edgeColor = "#333333";
-  private width: number;
-  private height: number;
+  constructor(graph: Graph<T>, canvas: HTMLCanvasElement, seed = "seed") {
+    this.graph = graph;
+    this.canvas = canvas;
+    this.rc = rough.canvas(this.canvas);
+    this.context = this.canvas.getContext("2d") as CanvasRenderingContext2D;
+    this.random = create(seed);
+    for (const node of this.graph.getNodes()) {
+      node.position = [
+        this.random.intBetween(this.radius * 2, 500 - this.radius * 2),
+        this.random.intBetween(this.radius * 2, 500 - this.radius * 2),
+      ];
 
-  private nodePositions: Map<T, [number, number]> = new Map();
-
-  constructor(width = 800, height = 600, seed = "seed") {
-    const document = new DOMImplementation().createDocument(
-      "http://www.w3.org/1999/xhtml",
-      "html",
-      null
-    );
-    const svgNode = document.createElementNS(
-      "http://www.w3.org/2000/svg",
-      "svg"
-    );
-    svgNode.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-    svgNode.setAttribute("version", "1.1");
-    svgNode.setAttribute("width", width.toString());
-    svgNode.setAttribute("height", height.toString());
-    svgNode.setAttribute("viewBox", `0 0 ${width} ${height}`);
-    document.documentElement.appendChild(svgNode);
-
-    this.rand = create(seed);
-    this.document = document;
-    this.roughSVG = rough.svg(svgNode);
-    this.svgNode = svgNode;
-    this.width = width;
-    this.height = height;
-  }
-
-  private randomColor(): string {
-    const r = Math.floor(this.rand(100)) + 155;
-    const g = Math.floor(this.rand(100)) + 155;
-    const b = Math.floor(this.rand(100)) + 155;
-
-    return `rgb(${r},${g},${b})`;
-  }
-
-  private randomPosition(): [number, number] {
-    const x = this.rand.floatBetween(
-      this.nodeRadius * 4,
-      this.width - this.nodeRadius * 4
-    );
-    const y = this.rand.floatBetween(
-      this.nodeRadius * 4,
-      this.height - this.nodeRadius * 4
-    );
-    // check if the position is already taken
-    const taken = Array.from(this.nodePositions.values()).some(
-      ([x2, y2]) =>
-        Math.sqrt(Math.pow(x - x2, 2) + Math.pow(y - y2, 2)) <
-        this.nodeRadius * 4
-    );
-    if (taken) {
-      return this.randomPosition();
+      node.color = getRandColor(this.random);
     }
-    return [x, y];
+    for (const edge of graph.getEdges()) {
+      edge.color = "black";
+    }
+  }
+  private drawNodes(nodes: Array<GNode<T>>) {
+    for (const node of nodes) {
+      this.drawNode(node);
+    }
   }
 
-  public drawGraph(graph: Graph<T>): GraphDrawer<T> {
-    // draw nodes
-    graph.getNodes().forEach((node) => {
-      const [x, y] = this.randomPosition();
-      this.nodePositions.set(node.data, [x, y]);
-    });
-
-    // draw edges
-    graph.getEdges().forEach((edge) => {
-      const [x1, y1] = this.nodePositions.get(edge.node1.data) || [
-        undefined,
-        undefined,
-      ];
-      const [x2, y2] = this.nodePositions.get(edge.node2.data) || [
-        undefined,
-        undefined,
-      ];
-      if (!x1 || !y1 || !x2 || !y2) {
-        throw new Error("Node position not found");
-      }
-      this.drawEdges(edge, x1, y1, x2, y2);
-    });
-
-    // draw nodes
-    graph.getNodes().forEach((node) => {
-      const [x, y] = this.nodePositions.get(node.data) || [
-        undefined,
-        undefined,
-      ];
-      if (!x || !y) {
-        throw new Error("Node position not found");
-      }
-      this.drawNode(node, x, y);
-    });
-
-    // draw a border
-    const border = this.roughSVG.rectangle(
-      this.nodeRadius * 2,
-      this.nodeRadius * 2,
-      this.width - this.nodeRadius * 4,
-      this.height - this.nodeRadius * 4,
-      {
-        stroke: this.edgeColor,
-        strokeWidth: 1,
-        roughness: 5,
-      }
-    );
-    this.svgNode.appendChild(border);
-
-    return this;
-  }
-
-  private drawNode(node: GNode<T>, x: number, y: number) {
-    // Draw node, a circle with text inside
-    const circle = this.roughSVG.circle(x, y, this.nodeRadius * 2, {
-      fill: this.randomColor(),
-      fillStyle: "solid",
-      strokeWidth: 1,
-      roughness: 2,
-      hachureAngle: 60,
-    });
-    this.svgNode.appendChild(circle);
-
-    // draw text
-    const elem = this.document.createElementNS(
-      "http://www.w3.org/2000/svg",
-      "text"
-    );
-    elem.setAttribute("x", x.toString());
-    elem.setAttribute("y", y.toString());
-    elem.setAttribute("text-anchor", "middle");
-    elem.setAttribute("alignment-baseline", "middle");
-    elem.setAttribute("font-size", "20px");
-    elem.setAttribute("font-family", "sans-serif");
-    elem.setAttribute("fill", "black");
-    elem.textContent = node.data as string;
-    this.svgNode.appendChild(elem);
-  }
-
-  private drawEdges(
-    edge: Edge<T>,
-    x1: number,
-    y1: number,
-    x2: number,
-    y2: number
-  ) {
-    // Draw edges
-    const line = this.roughSVG.line(x1, y1, x2, y2, {
+  private drawNode(node: GNode<T>) {
+    const rc = this.rc;
+    const context = this.context;
+    const [x, y] = node.position || [0, 0];
+    const color = node.color || "black";
+    rc.circle(x, y, this.radius * 2, {
+      roughness: 0.5,
       stroke: "black",
-      strokeWidth: 2,
-      roughness: 1,
+      fill: color,
+      hachureAngle: this.random.intBetween(0, 360),
+      hachureGap: this.random.intBetween(0, 1),
     });
-    this.svgNode.appendChild(line);
-    const elemEd = this.document.createElementNS(
-      "http://www.w3.org/2000/svg",
-      "text"
-    );
-    elemEd.setAttribute("x", `${(x1 + x2) / 2}`);
-    elemEd.setAttribute("y", `${(y1 + y2) / 2 + 15}`);
-    elemEd.setAttribute("text-anchor", "middle");
-    elemEd.setAttribute("alignment-baseline", "middle");
-    elemEd.setAttribute("font-size", "20px");
-    elemEd.setAttribute("font-family", "sans-serif");
-    elemEd.setAttribute("fill", "black");
-    elemEd.textContent = edge.weight.toString();
-    this.svgNode.appendChild(elemEd);
+    if (typeof node.data === "string") {
+      context.font = "20px Arial";
+      context.fillStyle = "black";
+      context.fillText(node.data.toString(), x - 5, y + 5);
+    }
+  }
+  private drawEdges(edges: Array<Edge<T>>) {
+    for (const edge of edges) {
+      this.drawEdge(edge);
+    }
+  }
+
+  private drawEdge(edge: Edge<T>) {
+    const rc = this.rc;
+    const context = this.context;
+    const [x1, y1] = edge.node1.position || [0, 0];
+    const [x2, y2] = edge.node2.position || [0, 0];
+    const color = edge.color || "black";
+    const weight = edge.weight || 1;
+    rc.line(x1, y1, x2, y2, { roughness: 0.5, stroke: color });
+    const [dx, dy] = [x2 - x1, y2 - y1];
+    const [d, theta] = [Math.sqrt(dx * dx + dy * dy), Math.atan2(dy, dx)];
+    const [x, y] = [
+      x1 + (Math.cos(theta) * d) / 2,
+      y1 + (Math.sin(theta) * d) / 2,
+    ];
+    context.font = "20px Arial";
+    context.fillStyle = "black";
+    context.fillText(weight.toString(), x, y);
+  }
+  private draw() {
+    const nodes = this.graph.getNodes();
+    const edges = this.graph.getEdges();
+    this.drawEdges(edges);
+    this.drawNodes(nodes);
+  }
+
+  private updateNodesPosition() {
+    const newPositions = [] as Array<[number, number]>;
+    for (const node of this.graph.getNodes()) {
+      // get all neighbors position
+      const neighbors = node.getNeighbors();
+      const neighborsPosition = neighbors.map((neighbor) => {
+        return neighbor.position || [0, 0];
+      });
+      // calculate a new position, moving towards the average of the neighbors, with a random offset, and mantaining a distance of 2 * radius
+      const [x, y] = node.position || [0, 0];
+      const [x1, y1] = neighborsPosition.reduce(
+        (acc, curr) => [acc[0] + curr[0], acc[1] + curr[1]],
+        [0, 0]
+      );
+      const [x2, y2] = [
+        x1 / neighborsPosition.length,
+        y1 / neighborsPosition.length,
+      ];
+      const [dx, dy] = [x2 - x, y2 - y];
+      const [d, theta] = [Math.sqrt(dx * dx + dy * dy), Math.atan2(dy, dx)];
+      let [newX, newY] = [x + Math.cos(theta) * d, y + Math.sin(theta) * d];
+      const [randX, randY] = [
+        this.random.intBetween(-10, 10),
+        this.random.intBetween(-10, 10),
+      ];
+      [newX, newY] = [newX + randX, newY + randY];
+      if (newX > 500) {
+        newX = 500;
+      }
+      if (newX < 0) {
+        newX = 0;
+      }
+      if (newY > 500) {
+        newY = 500;
+      }
+      if (newY < 0) {
+        newY = 0;
+      }
+      // check if the new position is too close to another node
+      for (const [x, y] of newPositions) {
+        const [dx, dy] = [newX - x, newY - y];
+        const [d, theta] = [Math.sqrt(dx * dx + dy * dy), Math.atan2(dy, dx)];
+        if (d < this.radius * 3) {
+          [newX, newY] = [
+            x + Math.cos(theta) * this.radius * 2,
+            y + Math.sin(theta) * this.radius * 2,
+          ];
+        }
+      }
+
+      const [finalX, finalY] = [newX, newY];
+      newPositions.push([finalX, finalY]);
+    }
+    for (let i = 0; i < newPositions.length; i++) {
+      const node = this.graph.getNodes()[i];
+      node.position = newPositions[i];
+    }
+  }
+
+  public start(iterations = 1) {
+    for (let i = 0; i < iterations; i++) {
+      this.updateNodesPosition();
+    }
+    this.draw();
   }
 }
