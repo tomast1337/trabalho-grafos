@@ -66,6 +66,7 @@ const App = () => {
       a.href = url;
       a.download = "graph.txt";
       a.click();
+      setMessage("Saved");
     } else {
       setMessage("No graph to save");
     }
@@ -75,6 +76,7 @@ const App = () => {
       const prim = new KruskalAlgorithm<string>();
       const newGraph = prim.kruskalMST(graph);
       setGraph(newGraph);
+      setMessage("");
     } else {
       setMessage("No graph to get MTS (Kruskal)");
     }
@@ -84,12 +86,14 @@ const App = () => {
       const prim = new PrimAlgorithm<string>();
       const newGraph = prim.primMST(graph);
       setGraph(newGraph);
+      setMessage("");
     } else {
       setMessage("No graph to get MTS (Prim)");
     }
   };
   const runMeanDistance = () => {
     if (graph) {
+      setMessage(`Mean distance: ${graph.getMeanDistance()}`);
     } else {
       setMessage("No graph to get mean distance");
     }

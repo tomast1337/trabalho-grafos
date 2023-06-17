@@ -60,6 +60,12 @@ export class Graph<T> {
     return Array.from(this.nodes.values());
   }
 
+  public getMeanDistance(): number {
+    const edges = this.getEdges();
+    const sum = edges.reduce((acc, edge) => acc + edge.weight, 0);
+    return sum / edges.length;
+  }
+
   public getEdges(): Edge<T>[] {
     const edges: Set<Edge<T>> = new Set<Edge<T>>();
 
@@ -80,5 +86,17 @@ export class Graph<T> {
     return this.getEdges()
       .map((edge) => `${edge.node1.data} ${edge.node2.data} ${edge.weight}`)
       .join("\n");
+  }
+
+  public getAllUnconnectedNodes(): GNode<T>[] {
+    return this.getNodes().filter((node) => node.getNeighbors().length === 0);
+  }
+
+  public save(): string {
+    const edges = this.edgesString();
+    // get all unconected nodes
+    const nodes = this.getAllUnconnectedNodes();
+    const nodesString = nodes.map((node) => node.data).join("\n");
+    return `${nodesString}\n${edges}`;
   }
 }
