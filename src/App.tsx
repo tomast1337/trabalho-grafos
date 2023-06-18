@@ -129,7 +129,7 @@ const App = () => {
   useEffect(
     () => {
       if (canvasCurrent && graph) {
-        const drawer = new GraphDrawer<string>(graph, canvasCurrent, seed);
+        const drawer = new GraphDrawer(graph, canvasCurrent, seed);
         drawer.start();
       }
     },
@@ -138,7 +138,15 @@ const App = () => {
   );
   return (
     <main>
-      <h1 className="text-5xl text-center font-bold">Trabalho grafo</h1>
+      <h1 className="text-5xl text-center font-bold text-white my-5">
+        Trabalho grafo
+      </h1>
+      <h2 className="text-3xl text-center font-bold text-white my-5">Alunos</h2>
+      <ul className="text-2xl text-center font-bold text-white my-5">
+        <li></li>
+        <li>Nicolas Vycas Nery</li>
+      </ul>
+
       <article className="mx-auto w-full max-w-4xl grid grid-cols-1">
         <section className="grid grid-cols-2 gap-4 w-full mb-5">
           <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5">
@@ -221,7 +229,7 @@ const App = () => {
         </section>
         <section className={`grid grid-cols-1 ${isLoaded ? "" : "hidden"}`}>
           <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 mb-5">
-            <canvas ref={canvasRef} className="" width="500px" height="500px" />
+            <canvas ref={canvasRef} className="" width="900px" height="900px" />
           </div>
           <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 mb-5">
             <h1>Controls</h1>

@@ -99,4 +99,8 @@ export class Graph<T> {
     const nodesString = nodes.map((node) => node.data).join("\n");
     return `${nodesString}\n${edges}`;
   }
+
+  public getWeight(node: GNode<T>, otherNode: GNode<T>): number {
+    return node.getWeight(otherNode) || 0;
+  }
 }

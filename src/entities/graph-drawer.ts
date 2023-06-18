@@ -6,41 +6,44 @@ import { RandomSeed, create } from "random-seed";
 import { Edge } from "./edge";
 import { RoughCanvas } from "roughjs/bin/canvas";
 import { getRandColor } from "../utils/color";
+import { FruchtermanReingold } from "./fruchterman-reingold";
 
-export class GraphDrawer<T> {
-  private graph: Graph<T>;
+export class GraphDrawer {
+  private graph: Graph<string>;
   private canvas: HTMLCanvasElement;
   private context: CanvasRenderingContext2D;
   private rc: RoughCanvas;
   private random: RandomSeed;
   private radius = 15;
   private renderHandler: number | null = null;
+  private simulation: FruchtermanReingold<string>;
 
-  constructor(graph: Graph<T>, canvas: HTMLCanvasElement, seed = "seed") {
+  constructor(graph: Graph<string>, canvas: HTMLCanvasElement, seed = "seed") {
     this.graph = graph;
     this.canvas = canvas;
     this.rc = rough.canvas(this.canvas);
     this.context = this.canvas.getContext("2d") as CanvasRenderingContext2D;
     this.random = create(seed);
     for (const node of this.graph.getNodes()) {
-      node.position = [
-        250, //this.random.intBetween(this.radius * 2, 500 - this.radius * 2),
-        250, //this.random.intBetween(this.radius * 2, 500 - this.radius * 2),
-      ];
-
       node.color = getRandColor(this.random);
     }
     for (const edge of graph.getEdges()) {
       edge.color = "black";
     }
+    this.simulation = new FruchtermanReingold<string>(
+      graph,
+      canvas.width,
+      canvas.height
+    );
+    this.simulation.layout();
   }
-  private drawNodes(nodes: Array<GNode<T>>) {
+  private drawNodes(nodes: Array<GNode<string>>) {
     for (const node of nodes) {
       this.drawNode(node);
     }
   }
 
-  private drawNode(node: GNode<T>) {
+  private drawNode(node: GNode<string>) {
     const rc = this.rc;
     const context = this.context;
     const [x, y] = node.position || [0, 0];
@@ -50,7 +53,7 @@ export class GraphDrawer<T> {
       stroke: "black",
       fill: color,
       hachureAngle: this.random.intBetween(0, 360),
-      hachureGap: this.random.intBetween(0, 1),
+      hachureGap: this.random.intBetween(1, 5),
     });
     if (typeof node.data === "string") {
       context.font = "20px Arial";
@@ -58,13 +61,13 @@ export class GraphDrawer<T> {
       context.fillText(node.data.toString(), x - 5, y + 5);
     }
   }
-  private drawEdges(edges: Array<Edge<T>>) {
+  private drawEdges(edges: Array<Edge<string>>) {
     for (const edge of edges) {
       this.drawEdge(edge);
     }
   }
 
-  private drawEdge(edge: Edge<T>) {
+  private drawEdge(edge: Edge<string>) {
     const rc = this.rc;
     const context = this.context;
     const [x1, y1] = edge.node1.position || [0, 0];
@@ -75,11 +78,11 @@ export class GraphDrawer<T> {
     const [dx, dy] = [x2 - x1, y2 - y1];
     const [d, theta] = [Math.sqrt(dx * dx + dy * dy), Math.atan2(dy, dx)];
     const [x, y] = [
-      x1 + (Math.cos(theta) * d) / 2 + this.random.intBetween(-1, 1),
-      y1 + (Math.sin(theta) * d) / 2 + this.random.intBetween(-1, 1),
+      x1 + (Math.cos(theta) * d) / 2 ,
+      y1 + (Math.sin(theta) * d) / 2 ,
     ];
     context.font = "20px Arial";
-    context.fillStyle = "black";
+    context.fillStyle = "red";
     context.fillText(weight.toString(), x, y);
   }
   private draw() {
@@ -95,81 +98,14 @@ export class GraphDrawer<T> {
   }
 
   private updateNodesPosition() {
-    const newPositions: [number, number][] = [];
-    const k = 5; // Repulsion factor
-    const c = 10; // Attraction factor
-    const threshold = this.radius * 4; // minimum distance between nodes
-    const canvasWidth = this.canvas.width;
-    const canvasHeight = this.canvas.height;
-
-    for (const node of this.graph.getNodes()) {
-      const neighbors = node.getNeighbors();
-      const neighborsPosition = neighbors.map(
-        (neighbor) => neighbor.position || [0, 0]
-      );
-
-      const [x, y] = node.position || [0, 0];
-      let [dx, dy] = [0, 0];
-
-      // Apply repulsion force from other nodes
-      for (const otherNode of this.graph.getNodes()) {
-        if (otherNode !== node) {
-          const [nx, ny] = otherNode.position || [0, 0];
-          const distance = Math.max(
-            this.radius * 4,
-            Math.sqrt((nx - x) ** 2 + (ny - y) ** 2)
-          );
-          const force = k / distance;
-          dx += ((x - nx) / distance) * (force * 1000);
-          dy += ((y - ny) / distance) * (force * 1000);
-        }
-      }
-
-      // Apply attraction force towards neighbors
-      for (const [nx, ny] of neighborsPosition) {
-        const distance = Math.max(
-          this.radius,
-          Math.sqrt((nx - x) ** 2 + (ny - y) ** 2)
-        );
-        const force = c * distance;
-        if (distance < threshold) {
-          dx += ((nx - x) / distance) * force;
-          dy += ((ny - y) / distance) * force;
-        }
-      }
-      // apply repulsion force from canvas border
-      const distanceFromBorder = Math.min(
-        x,
-        y,
-        canvasWidth - x,
-        canvasHeight - y
-      );
-      const force = k / distanceFromBorder;
-      dx += ((x - canvasWidth / 2) / distanceFromBorder) * force;
-      dy += ((y - canvasHeight / 2) / distanceFromBorder) * force;
-
-      dy += this.random.floatBetween(-1, 1);
-      dx += this.random.floatBetween(-1, 1);
-      // Update node position
-      let [newX, newY] = [x + dx, y + dy];
-      newX = Math.max(this.radius, Math.min(newX, canvasWidth - this.radius));
-      newY = Math.max(this.radius, Math.min(newY, canvasHeight - this.radius));
-      newPositions.push([newX, newY]);
-    }
-
-    const nodes = this.graph.getNodes();
-    for (let i = 0; i < newPositions.length; i++) {
-      const node = nodes[i];
-      node.position = newPositions[i];
-    }
+    this.simulation.updateNodesPosition();
   }
 
-  public start(iterations = 1) {
-    for (let i = 0; i < iterations; i++) {
-      this.updateNodesPosition();
-    }
+  public async start() {
     this.draw();
-    this.renderHandler = requestAnimationFrame(() => this.renderLoop());
+    for (let i = 0; i < 100; i++) {
+      await this.renderLoop();
+    }
   }
 
   public stop() {
@@ -179,8 +115,7 @@ export class GraphDrawer<T> {
   private async renderLoop() {
     this.updateNodesPosition();
     this.draw();
-    await new Promise((resolve) => setTimeout(resolve, 10));
-    this.renderHandler = requestAnimationFrame(() => this.renderLoop());
+    await new Promise((resolve) => setTimeout(resolve, 120));
   }
 
   public setGraph(graph: Graph<T>) {
