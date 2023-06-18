@@ -5,6 +5,8 @@ import { Graph } from "./entities/graph";
 import { PrimAlgorithm } from "./entities/prim-algorithm";
 import { KruskalAlgorithm } from "./entities/kruskal-algorithm";
 import { AdjacencyMatrix } from "./entities/adjacency-matrix";
+import { BFSSearch } from "./entities/BFS-search";
+import { DFSSearch } from "./entities/DFS-search";
 
 const App = () => {
   const [message, setMessage] = useState("");
@@ -27,6 +29,9 @@ const App = () => {
   const [seed, setSeed] = useState<string>("seed");
   const [graph, setGraph] = useState<Graph<string> | null>(null);
   const [drawer, setDrawer] = useState<GraphDrawer<string> | null>(null);
+
+  // search
+  const [endNode, setEndNode] = useState<string | null>(null);
 
   const carregar = async () => {
     if (mododeOperacao === "string") {
@@ -94,7 +99,6 @@ const App = () => {
   };
   const runAdjacencyList = () => {
     if (graph) {
-      console.log("Adjacency list");
       const list = graph.getAdjacencyList();
       console.log(JSON.stringify(list));
     } else {
@@ -108,7 +112,7 @@ const App = () => {
       setGraph(newGraph);
       setMessage("");
     } else {
-      setMessage("No graph to get MTS (Kruskal)");
+      setMessage("No graph to get MST (Kruskal)");
     }
   };
   const runPrim = () => {
@@ -118,7 +122,7 @@ const App = () => {
       setGraph(newGraph);
       setMessage("");
     } else {
-      setMessage("No graph to get MTS (Prim)");
+      setMessage("No graph to get MST (Prim)");
     }
   };
   const runMeanDistance = () => {
@@ -130,12 +134,30 @@ const App = () => {
   };
   const runBFS = () => {
     if (graph) {
+      const end = endNode;
+      if (!end) {
+        setMessage("Search node is required");
+        return;
+      }
+
+      const bfs = new BFSSearch(graph, end);
+      const path = bfs.search();
+      setMessage(`Path: ${path.join(" -> ")}`);
     } else {
       setMessage("No graph to run BFS");
     }
   };
   const runDFS = () => {
     if (graph) {
+      const end = endNode;
+      if (!end) {
+        setMessage("Search node is required");
+        return;
+      }
+
+      const dfs = new DFSSearch(graph, end);
+      const path = dfs.search();
+      setMessage(`Path: ${path.join(" -> ")}`);
     } else {
       setMessage("No graph to run DFS");
     }
@@ -159,16 +181,27 @@ const App = () => {
   );
   return (
     <main>
-      <h1 className="text-5xl text-center font-bold text-white my-5">
-        Trabalho grafo
-      </h1>
-      <h2 className="text-3xl text-center font-bold text-white my-5">Alunos</h2>
-      <ul className="text-2xl text-center font-bold text-white my-5">
-        <li></li>
-        <li>Nicolas Vycas Nery</li>
-      </ul>
-
       <article className="mx-auto w-full max-w-4xl grid grid-cols-1">
+        <header>
+          <section className="grid grid-cols-2 gap-4 w-full mb-5 my-5">
+            <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5">
+              <h1 className="text-5xl text-center font-bold text-black ">
+                Trabalho grafo
+              </h1>
+              <h2 className="text-lg  font-bold text-black mt-5">Alunos:</h2>
+              <p>
+                Bernardo Martins Corrêa D'Abreu e Costa e Nicolas Vycas Nery
+              </p>
+            </div>
+
+            <img
+              src="/graph.svg"
+              alt="logo"
+              className="w-full h-[250px] object-cover rounded-lg"
+            />
+          </section>
+        </header>
+
         <section className="grid grid-cols-2 gap-4 w-full mb-5">
           <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5">
             <h2 className="text-3xl text-center font-bold">Operation mode</h2>
@@ -227,8 +260,6 @@ const App = () => {
               </>
             )}
           </div>
-        </section>
-        <section className="grid grid-cols-1">
           <div
             className={`flex flex-col items-center bg-white shadow-xl rounded-lg p-5 mb-5 ${
               message === "" ? "hidden" : ""
@@ -239,81 +270,86 @@ const App = () => {
             </p>
           </div>
 
-          <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 mb-5">
+          <div
+            className={`grid gap-4 ${
+              isLoaded ? "grid-cols-2" : "grid-cols-1"
+            } bg-white shadow-xl rounded-lg p-5 mb-5`}
+          >
             <button
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
               onClick={carregar}
             >
               Load
             </button>
+            <button
+              className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ${
+                isLoaded ? "" : "hidden"
+              }`}
+              onClick={saveGraph}
+            >
+              Save graph
+            </button>
           </div>
         </section>
+        <section className="grid grid-cols-1"></section>
         <section className={`grid grid-cols-1 ${isLoaded ? "" : "hidden"}`}>
           <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 mb-5">
             <canvas ref={canvasRef} className="" width="900px" height="900px" />
           </div>
           <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 mb-5">
-            <h1>Controls</h1>
-
-            <label className="flex items-center cursor-pointer">
-              <div className="relative">
-                <input
-                  type="text"
-                  className="border-2 border-gray-500"
-                  onChange={(e) => {
-                    setSeed(e.target.value);
-                  }}
-                  value={seed}
-                  placeholder="Seed (for reproducibility)"
-                />
-              </div>
-            </label>
-            <label className="flex items-center cursor-pointer">
-              <div className="relative">
-                <input
-                  placeholder="Search for a node"
-                  type="text"
-                  className="border-2 border-gray-500"
-                />
-              </div>
-            </label>
+            <h1 className="text-2xl text-center font-bold">Options</h1>
             <div className="grid grid-cols-3 gap-4 w-full mb-5">
               <button
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                 onClick={runKruskal}
               >
-                get MTS (Kruskal)
+                Get MST (Kruskal-algorithm)
               </button>
               <button
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                 onClick={runPrim}
               >
-                get MTS (Prim)
+                Get MST (Prim-algorithm)
               </button>
               <button
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                 onClick={runMeanDistance}
               >
-                get mean distance
+                Get mean distance
               </button>
-              <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                onClick={runBFS}
-              >
-                BFS
-              </button>
-              <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                onClick={runDFS}
-              >
-                DFS
-              </button>
-              <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                onClick={saveGraph}
-              >
-                Save graph
-              </button>
+            </div>
+            <h1 className="text-2xl text-center font-bold">Search</h1>
+            <div className="flex flex-col items-center p-5 mb-5">
+              <div className="grid grid-cols-1 gap-4 mb-5">
+                <label className="flex items-center cursor-pointer">
+                  <div className="relative">
+                    <input
+                      placeholder="End node"
+                      type="text"
+                      className="border-2 border-gray-500"
+                      value={endNode || ""}
+                      onChange={(e) => {
+                        setEndNode(e.target.value || null);
+                      }}
+                    />
+                  </div>
+                </label>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 w-full">
+                <button
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                  onClick={runBFS}
+                >
+                  BFS (Breadth-first search)
+                </button>
+                <button
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                  onClick={runDFS}
+                >
+                  DFS (Depth-first search)
+                </button>
+              </div>
             </div>
           </div>
         </section>
