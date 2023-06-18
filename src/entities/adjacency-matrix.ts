@@ -1,4 +1,5 @@
 import { Graph } from "./graph";
+import type { GNode } from "./node";
 
 // Generate adjacency matrix from graph
 
@@ -18,15 +19,24 @@ export class AdjacencyMatrix<T> {
       }
     }
 
+    const nodes = this.getSortedNodes();
+
     for (const edge of this.graph.getEdges()) {
       const { node1, node2, weight } = edge;
 
-      const sourceIndex = this.graph.getNodes().indexOf(node1);
-      const targetIndex = this.graph.getNodes().indexOf(node2);
+      const sourceIndex = nodes.indexOf(node1);
+      const targetIndex = nodes.indexOf(node2);
 
       this.matrix[sourceIndex][targetIndex] = weight;
       this.matrix[targetIndex][sourceIndex] = weight;
     }
+  }
+
+  public getSortedNodes(): GNode<T>[] {
+    // Return a list of nodes sorted alphabetically by data
+    return this.graph.getNodes().sort((a, b) => {
+      return a.data > b.data ? 1 : -1;
+    });
   }
 
   public getMatrix(): number[][] {
