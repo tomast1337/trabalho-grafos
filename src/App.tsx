@@ -65,10 +65,8 @@ const App = () => {
       d.start();
       setDrawer(d);
     }
-    if (graph) {
-      const matrix = new AdjacencyMatrix(graph);
-      console.log(matrix.getMatrix());
-    }
+    runAdjacencyMatrix();
+
     setIsLoaded(true);
   };
   const saveGraph = () => {
@@ -83,6 +81,14 @@ const App = () => {
       setMessage("Saved");
     } else {
       setMessage("No graph to save");
+    }
+  };
+  const runAdjacencyMatrix = () => {
+    if (graph) {
+      const matrix = new AdjacencyMatrix<string>(graph);
+      console.log(JSON.stringify(matrix.getMatrix()));
+    } else {
+      setMessage("No graph to get adjacency matrix");
     }
   };
   const runKruskal = () => {
