@@ -4,6 +4,7 @@ import { GraphDrawer } from "./entities/graph-drawer";
 import { Graph } from "./entities/graph";
 import { PrimAlgorithm } from "./entities/prim-algorithm";
 import { KruskalAlgorithm } from "./entities/kruskal-algorithm";
+import { AdjacencyMatrix } from "./entities/adjacency-matrix";
 
 const App = () => {
   const [message, setMessage] = useState("");
@@ -63,6 +64,10 @@ const App = () => {
       const d = new GraphDrawer<string>(graph, canvasCurrent, seed);
       d.start();
       setDrawer(d);
+    }
+    if (graph) {
+      const matrix = new AdjacencyMatrix(graph);
+      console.log(matrix.getMatrix());
     }
     setIsLoaded(true);
   };
