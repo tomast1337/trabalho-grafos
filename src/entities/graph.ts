@@ -103,4 +103,13 @@ export class Graph<T> {
   public getWeight(node: GNode<T>, otherNode: GNode<T>): number {
     return node.getWeight(otherNode) || 0;
   }
+
+  public getNeighbors(currentNode: T) {
+    const node = this.getNode(currentNode);
+    if (node) {
+      return node.getNeighbors().map((neighbor) => neighbor.data);
+    } else {
+      return [];
+    }
+  }
 }
