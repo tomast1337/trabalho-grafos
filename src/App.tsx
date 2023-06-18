@@ -66,6 +66,7 @@ const App = () => {
       setDrawer(d);
     }
     runAdjacencyMatrix();
+    runAdjacencyList();
 
     setIsLoaded(true);
   };
@@ -89,6 +90,15 @@ const App = () => {
       console.log(JSON.stringify(matrix.getMatrix()));
     } else {
       setMessage("No graph to get adjacency matrix");
+    }
+  };
+  const runAdjacencyList = () => {
+    if (graph) {
+      console.log("Adjacency list");
+      const list = graph.getAdjacencyList();
+      console.log(JSON.stringify(list));
+    } else {
+      setMessage("No graph to get adjacency list");
     }
   };
   const runKruskal = () => {

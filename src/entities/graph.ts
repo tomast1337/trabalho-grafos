@@ -88,6 +88,18 @@ export class Graph<T> {
       .join("\n");
   }
 
+  public getAdjacencyList(): { [key: string]: string[] } {
+    const adjacencyList: { [key: string]: string[] } = {};
+
+    for (const node of this.nodes.values()) {
+      adjacencyList[node.data.toString()] = node
+        .getNeighbors()
+        .map((node) => node.data.toString());
+    }
+
+    return adjacencyList;
+  }
+
   public getAllUnconnectedNodes(): GNode<T>[] {
     return this.getNodes().filter((node) => node.getNeighbors().length === 0);
   }
