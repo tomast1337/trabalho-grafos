@@ -14,11 +14,11 @@ body {
     background: rgb(63,94,251);
     background: radial-gradient(
     circle,
-    #AEDCC0 0%,
-    #38E4AE 25%,
-    #7bd389 50%,
-    #607466 95%,
-    #343E3D 100%);
+    #4A437A 0%,
+    #443C68 5%,
+    #393053 60%,
+    #18122B 80%
+    );
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-size: cover;

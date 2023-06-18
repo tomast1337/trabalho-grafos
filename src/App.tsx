@@ -162,12 +162,24 @@ const App = () => {
   return (
     <main>
       <article className="mx-auto w-full max-w-4xl grid grid-cols-1">
-        <header className="w-[470px] bg-white shadow-xl rounded-lg p-5 my-5">
-          <h1 className="text-5xl text-center font-bold text-black my-5">
-            Trabalho grafo
-          </h1>
-          <h2 className="text-lg  font-bold text-black mt-5">Alunos:</h2>
-          <p>Bernardo Martins Corrêa D'Abreu e Costa e Nicolas Vycas Nery</p>
+        <header>
+          <section className="grid grid-cols-2 gap-4 w-full mb-5 my-5">
+            <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5">
+              <h1 className="text-5xl text-center font-bold text-black ">
+                Trabalho grafo
+              </h1>
+              <h2 className="text-lg  font-bold text-black mt-5">Alunos:</h2>
+              <p>
+                Bernardo Martins Corrêa D'Abreu e Costa e Nicolas Vycas Nery
+              </p>
+            </div>
+
+            <img
+              src="/graph.svg"
+              alt="logo"
+              className="w-full h-[250px] object-cover rounded-lg"
+            />
+          </section>
         </header>
 
         <section className="grid grid-cols-2 gap-4 w-full mb-5">
