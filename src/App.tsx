@@ -33,6 +33,11 @@ const App = () => {
   // search
   const [endNode, setEndNode] = useState<string | null>(null);
 
+  // adjacencymatrix
+  const [adjacencyMatrix, setAdjacencyMatrix] = useState<string>("");
+  // adjacencylist
+  const [adjacencyList, setAdjacencyList] = useState<string>("");
+
   const carregar = async () => {
     if (mododeOperacao === "string") {
       if (fileData) {
@@ -70,8 +75,8 @@ const App = () => {
       d.start();
       setDrawer(d);
     }
-    runAdjacencyMatrix();
-    runAdjacencyList();
+    runAdjacencyMatrix(graph);
+    runAdjacencyList(graph);
 
     setIsLoaded(true);
   };
@@ -89,21 +94,18 @@ const App = () => {
       setMessage("No graph to save");
     }
   };
-  const runAdjacencyMatrix = () => {
-    if (graph) {
-      const matrix = new AdjacencyMatrix<string>(graph);
-      console.log(JSON.stringify(matrix.getMatrix()));
-    } else {
-      setMessage("No graph to get adjacency matrix");
-    }
+  const runAdjacencyMatrix = (graph) => {
+    const matrix = new AdjacencyMatrix<string>(graph);
+    const str = JSON.stringify(matrix.getMatrix(), null, 2).replaceAll(
+      ",\n",
+      ""
+    );
+    setAdjacencyMatrix(str);
   };
-  const runAdjacencyList = () => {
-    if (graph) {
-      const list = graph.getAdjacencyList();
-      console.log(JSON.stringify(list));
-    } else {
-      setMessage("No graph to get adjacency list");
-    }
+  const runAdjacencyList = (graph: Graph<string>) => {
+    const list = graph.getAdjacencyList();
+    const str = JSON.stringify(list, null, 2);
+    setAdjacencyList(str);
   };
   const runKruskal = () => {
     if (graph) {
@@ -291,7 +293,24 @@ const App = () => {
             </button>
           </div>
         </section>
-        <section className="grid grid-cols-1"></section>
+        <section className="grid grid-cols-2">
+          <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 mb-5">
+            <h1 className="text-2xl text-center font-bold">Adjacency matrix</h1>
+            <textarea
+              className="font-mono w-[90%] h-[300px] border-2 border-gray-500 p-2 focus:outline-none text-xl"
+              value={adjacencyMatrix}
+              readOnly
+            ></textarea>
+          </div>
+          <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 mb-5">
+            <h1 className="text-2xl text-center font-bold">Adjacency list</h1>
+            <textarea
+              className="font-mono w-[90%] h-[300px] border-2 border-gray-500 p-2 focus:outline-none text-xl"
+              value={adjacencyList}
+              readOnly
+            ></textarea>
+          </div>
+        </section>
         <section className={`grid grid-cols-1 ${isLoaded ? "" : "hidden"}`}>
           <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 mb-5">
             <canvas ref={canvasRef} className="" width="900px" height="900px" />
