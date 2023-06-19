@@ -100,6 +100,17 @@ export class Graph<T> {
     return adjacencyList;
   }
 
+  public printAdjacencyList(): string {
+    const adjacencyList = this.getAdjacencyList();
+    let output = "";
+
+    for (const key in adjacencyList) {
+      output += `${key}: [ ${adjacencyList[key].join(", ")} ]\n`;
+    }
+
+    return output;
+  }
+
   public getAllUnconnectedNodes(): GNode<T>[] {
     return this.getNodes().filter((node) => node.getNeighbors().length === 0);
   }

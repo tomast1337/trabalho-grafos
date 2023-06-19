@@ -42,4 +42,28 @@ export class AdjacencyMatrix<T> {
   public getMatrix(): number[][] {
     return this.matrix;
   }
+
+  public printMatrix(): string {
+    const matrix = this.getMatrix();
+    const nodes = this.getSortedNodes();
+
+    let output = "    ";
+
+    for (const row of matrix) {
+      output += `${nodes[matrix.indexOf(row)].data}  `;
+    }
+
+    output += "\n   ";
+    output += "---".repeat(matrix.length);
+
+    return (
+      output +
+      "\n" +
+      matrix
+        .map((row, index) => {
+          return `${nodes[index].data} | ${row.join("  ")}`;
+        })
+        .join("\n")
+    );
+  }
 }

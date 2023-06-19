@@ -96,15 +96,11 @@ const App = () => {
   };
   const runAdjacencyMatrix = (graph) => {
     const matrix = new AdjacencyMatrix<string>(graph);
-    const str = JSON.stringify(matrix.getMatrix(), null, 2).replaceAll(
-      ",\n",
-      ""
-    );
+    const str = matrix.printMatrix();
     setAdjacencyMatrix(str);
   };
   const runAdjacencyList = (graph: Graph<string>) => {
-    const list = graph.getAdjacencyList();
-    const str = JSON.stringify(list, null, 2);
+    const str = graph.printAdjacencyList();
     setAdjacencyList(str);
   };
   const runKruskal = () => {
