@@ -67,6 +67,8 @@ const App = () => {
       graph = loader.loadFromText(data);
       setMessage("");
       setGraph(graph);
+      runAdjacencyMatrix(graph);
+      runAdjacencyList(graph);
     } catch (e: any) {
       setMessage(e.message || "Erro desconhecido");
     }
@@ -75,9 +77,6 @@ const App = () => {
       d.start();
       setDrawer(d);
     }
-    runAdjacencyMatrix(graph);
-    runAdjacencyList(graph);
-
     setIsLoaded(true);
   };
   const saveGraph = () => {
@@ -94,7 +93,7 @@ const App = () => {
       setMessage("No graph to save");
     }
   };
-  const runAdjacencyMatrix = (graph) => {
+  const runAdjacencyMatrix = (graph: Graph<string>) => {
     const matrix = new AdjacencyMatrix<string>(graph);
     const str = matrix.printMatrix();
     setAdjacencyMatrix(str);
