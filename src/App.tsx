@@ -7,6 +7,7 @@ import { KruskalAlgorithm } from "./entities/kruskal-algorithm";
 import { AdjacencyMatrix } from "./entities/adjacency-matrix";
 import { BFSSearch } from "./entities/BFS-search";
 import { DFSSearch } from "./entities/DFS-search";
+import { ConnectedComponents } from "./entities/connected-components";
 
 const App = () => {
   const [message, setMessage] = useState("");
@@ -39,6 +40,12 @@ const App = () => {
   const [adjacencyMatrix, setAdjacencyMatrix] = useState<string>("");
   // adjacencylist
   const [adjacencyList, setAdjacencyList] = useState<string>("");
+  // connected components
+  const [connectedComponents, setConnectedComponents] = useState<string>("");
+  // mean distance
+  const [meanDistance, setMeanDistance] = useState<string>("");
+  // mst
+  const [mst, setMst] = useState<string>("");
 
   const carregar = async () => {
     if (mododeOperacao === "string") {
@@ -129,6 +136,16 @@ const App = () => {
       setMessage(`Mean distance: ${graph.getMeanDistance()}`);
     } else {
       setMessage("No graph to get mean distance");
+    }
+  };
+  const runConnectedComponents = () => {
+    if (graph) {
+      const connectedComponents = new ConnectedComponents(
+        graph
+      ).printConnectedComponents();
+      setConnectedComponents(connectedComponents);
+    } else {
+      setMessage("No graph to get connected components");
     }
   };
   const runBFS = (): Graph<string> => {
@@ -324,6 +341,33 @@ const App = () => {
             ></textarea>
           </div>
         </section>
+
+        {/* CONNECTED COMPONENTS & MEAN DISTANCE */}
+        <section
+          className={`grid ${
+            isLoaded ? "" : "hidden"
+          } grid grid-cols-2 gap-4 w-full`}
+        >
+          <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 mb-5">
+            <h1 className="text-2xl text-center font-bold">
+              Connected components
+            </h1>
+            <textarea
+              className="font-mono w-[90%] h-[300px] border-2 border-gray-500 p-2 focus:outline-none text-xl"
+              value={connectedComponents}
+              readOnly
+            ></textarea>
+          </div>
+          <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 mb-5">
+            <h1 className="text-2xl text-center font-bold">Mean distance</h1>
+            <textarea
+              className="font-mono w-[90%] h-[300px] border-2 border-gray-500 p-2 focus:outline-none text-xl"
+              value={meanDistance}
+              readOnly
+            ></textarea>
+          </div>
+        </section>
+
         <section className={`grid grid-cols-1 ${isLoaded ? "" : "hidden"}`}>
           <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 mb-5">
             <canvas ref={canvasRef} className="" width="900px" height="900px" />
@@ -348,6 +392,14 @@ const App = () => {
                 onClick={runMeanDistance}
               >
                 Get mean distance
+              </button>
+            </div>
+            <div className="grid grid-cols-3 gap-4 w-full mb-5">
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                onClick={runConnectedComponents}
+              >
+                Connected components
               </button>
             </div>
           </div>
