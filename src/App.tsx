@@ -96,14 +96,14 @@ const App = () => {
     }
     setIsLoaded(true);
   };
-  const saveGraph = () => {
+  const saveGraph = (filename: string) => {
     if (graph) {
       const data = graph.save();
       const blob = new Blob([data], { type: "text/plain;charset=utf-8" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "graph.txt";
+      a.download = filename;
       a.click();
       setMessage("Saved");
     } else {
@@ -124,6 +124,8 @@ const App = () => {
       const prim = new KruskalAlgorithm<string>();
       const newGraph = prim.kruskalMST(graph);
       setGraph(newGraph);
+      setMst("Árvore mínima gerada a partir de Kruskal:\n\n" + newGraph.save());
+      saveGraph("mst_kruskal.txt");
       setMessage("");
     } else {
       setMessage("No graph to get MST (Kruskal)");
@@ -134,6 +136,8 @@ const App = () => {
       const prim = new PrimAlgorithm<string>();
       const newGraph = prim.primMST(graph);
       setGraph(newGraph);
+      setMst("Árvore mínima gerada a partir de Prim:\n\n" + newGraph.save());
+      saveGraph("mst_prim.txt");
       setMessage("");
     } else {
       setMessage("No graph to get MST (Prim)");
@@ -349,7 +353,7 @@ const App = () => {
               className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ${
                 isLoaded ? "" : "hidden"
               }`}
-              onClick={saveGraph}
+              onClick={() => saveGraph("graph.txt")}
             >
               Save graph
             </button>
