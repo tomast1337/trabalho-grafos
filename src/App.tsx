@@ -9,6 +9,7 @@ import { BFSSearch } from "./entities/BFS-search";
 import { DFSSearch } from "./entities/DFS-search";
 import { ConnectedComponents } from "./entities/connected-components";
 import { MeanDistance } from "./entities/mean-distance";
+import { Dijkstra } from "./entities/djikstra";
 
 const App = () => {
   const [message, setMessage] = useState("");
@@ -47,6 +48,10 @@ const App = () => {
   const [meanDistance, setMeanDistance] = useState<string>("");
   // mst
   const [mst, setMst] = useState<string>("");
+
+  // shortest path
+  const [sourceNode, setSourceNode] = useState<string | null>(null);
+  const [targetNode, setTargetNode] = useState<string | null>(null);
 
   const carregar = async () => {
     if (mododeOperacao === "string") {
@@ -162,7 +167,6 @@ const App = () => {
       return tree;
     } else {
       setMessage("No graph to run BFS");
-      throw new Error("No graph to run BFS");
     }
   };
   const runDFS = (): Graph<string> => {
@@ -179,6 +183,34 @@ const App = () => {
     } else {
       setMessage("No graph to run DFS");
       throw new Error("No graph to run DFS");
+    }
+  };
+  const runShortestPath = () => {
+    if (!graph) {
+      setMessage("No graph to get shortest path");
+      return;
+    }
+    const source = sourceNode;
+    const target = targetNode;
+    if (source === target) {
+      setMessage("Source and target nodes must be different");
+    } else if (!source || !target) {
+      setMessage("Source and target nodes are required");
+    } else {
+      // Create an instance of Dijkstra
+      const dijkstra = new Dijkstra(graph);
+
+      // Find the shortest path between two nodes
+      const path = dijkstra.findShortestPath("1", "4");
+      console.log("Shortest distance:", path.distance);
+      console.log("Shortest path:", path.path.join(" -> "));
+
+      // Find the shortest paths from a specific node to all other nodes
+      const paths = dijkstra.findShortestPathFromNode("1");
+      for (const [node, path] of paths) {
+        console.log(`Shortest distance from 1 to ${node}:`, path.distance);
+        console.log(`Shortest path from 1 to ${node}:`, path.path.join(" -> "));
+      }
     }
   };
 
@@ -365,6 +397,56 @@ const App = () => {
             <textarea
               className="font-mono w-[90%] h-[300px] border-2 border-gray-500 p-2 focus:outline-none text-xl"
               value={meanDistance}
+              readOnly
+            ></textarea>
+          </div>
+        </section>
+
+        {/* MST AND SHORTEST PATH */}
+        <section
+          className={`grid ${
+            isLoaded ? "" : "hidden"
+          } grid grid-cols-2 gap-4 w-full`}
+        >
+          <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 mb-5">
+            <h1 className="text-2xl text-center font-bold">MST</h1>
+            <textarea
+              className="font-mono w-[90%] h-[300px] border-2 border-gray-500 p-2 focus:outline-none text-xl"
+              value={mst}
+              readOnly
+            ></textarea>
+          </div>
+          <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 mb-5">
+            <h1 className="text-2xl text-center font-bold">Shortest path</h1>
+
+            <input
+              placeholder="Source node"
+              type="text"
+              className="border-2 border-gray-500"
+              value={sourceNode || ""}
+              onChange={(e) => {
+                setSourceNode(e.target.value || null);
+              }}
+            />
+            <input
+              placeholder="Target node"
+              type="text"
+              className="border-2 border-gray-500"
+              value={targetNode || ""}
+              onChange={(e) => {
+                setTargetNode(e.target.value || null);
+              }}
+            />
+            <button
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              onClick={runShortestPath}
+            >
+              Get shortest path
+            </button>
+            <br></br>
+            <textarea
+              className="font-mono w-[90%] h-[300px] border-2 border-gray-500 p-2 focus:outline-none text-xl"
+              value={mst}
               readOnly
             ></textarea>
           </div>
