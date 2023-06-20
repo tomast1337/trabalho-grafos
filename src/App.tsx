@@ -30,7 +30,7 @@ const App = () => {
 
   const [seed, setSeed] = useState<string>("seed");
   const [graph, setGraph] = useState<Graph<string> | null>(null);
-  const [drawer, setDrawer] = useState<GraphDrawer<string> | null>(null);
+  const [drawer, setDrawer] = useState<GraphDrawer | null>(null);
 
   // search
   const [endNode, setEndNode] = useState<string | null>(null);
@@ -144,6 +144,7 @@ const App = () => {
       return tree;
     } else {
       setMessage("No graph to run BFS");
+      throw new Error("No graph to run BFS");
     }
   };
   const runDFS = (): Graph<string> => {
@@ -159,6 +160,7 @@ const App = () => {
       return tree;
     } else {
       setMessage("No graph to run DFS");
+      throw new Error("No graph to run DFS");
     }
   };
 
@@ -189,8 +191,18 @@ const App = () => {
               </h1>
               <h2 className="text-lg  font-bold text-black mt-5">Alunos:</h2>
               <p>
-                Bernardo Martins Corrêa D'Abreu e Costa e Nicolas Vycas Nery
+                Bernardo Martins Corrêa D'Abreu e Costa 
               </p>
+              <p>
+              Nicolas Vycas Nery
+              </p>
+              <hr className="my-5 border-gray-500 w-full" />
+              <p>
+              View the source code on <a 
+              className="text-blue-500"
+              href="https://github.com/tomast1337/trabalho-grafos">GitHub</a>
+              </p>
+              
             </div>
 
             <img
@@ -362,23 +374,27 @@ const App = () => {
                 <button
                   className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                   onClick={() => {
-                    const BFSgraph = runBFS();
-                    const DFSgraph = runDFS();
-                    if (canvasBFSRef.current && canvasDFSRef.current) {
-                      const d1 = new GraphDrawer(
-                        BFSgraph,
-                        canvasBFSRef.current,
-                        seed,
-                        true
-                      );
-                      const d2 = new GraphDrawer(
-                        DFSgraph,
-                        canvasDFSRef.current,
-                        seed,
-                        true
-                      );
-                      d1.start();
-                      d2.start();
+                    try {
+                      const BFSgraph = runBFS();
+                      const DFSgraph = runDFS();
+                      if (canvasBFSRef.current && canvasDFSRef.current) {
+                        const d1 = new GraphDrawer(
+                          BFSgraph,
+                          canvasBFSRef.current,
+                          seed,
+                          true
+                        );
+                        const d2 = new GraphDrawer(
+                          DFSgraph,
+                          canvasDFSRef.current,
+                          seed,
+                          true
+                        );
+                        d1.start();
+                        d2.start();
+                      }
+                    } catch (error) {
+                      setMessage(error.message);
                     }
                   }}
                 >
