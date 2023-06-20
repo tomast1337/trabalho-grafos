@@ -62,9 +62,57 @@ export class Graph<T> {
   }
 
   public getMeanDistance(): number {
-    const edges = this.getEdges();
-    const sum = edges.reduce((acc, edge) => acc + edge.weight, 0);
-    return sum / edges.length;
+    // Mean of distance of all nodes (unordered) in the graph
+    // If there's no path between two nodes, the pair isn't considered for the calculation
+
+    const nodes = this.getNodes();
+    let sum = 0;
+    let count = 0;
+    for (const node of nodes) {
+      const distances = this.getDistances(node.data);
+      for (const distance of distances) {
+        console.log("DISTANCE: " + distance);
+        if (distance === undefined || distance === Infinity) {
+          continue;
+        }
+        sum += distance;
+        count += 1;
+      }
+    }
+    return sum / count;
+  }
+
+  public getDistances(source: T): number[] {
+    // Return an array of distances from source to all other nodes
+    // If there's no path between two nodes, the distance is Infinity
+
+    const distances: number[] = [];
+    const visited: Map<T, boolean> = new Map<T, boolean>();
+    const queue: T[] = [];
+
+    visited.set(source, true);
+    queue.push(source);
+    distances[source as any] = 0;
+
+    while (queue.length > 0) {
+      const current = queue.shift() as T;
+      const currentDistance = distances[current as any];
+
+      for (const neighbor of this.getNeighbors(current)) {
+        if (!visited.has(neighbor)) {
+          visited.set(neighbor, true);
+          queue.push(neighbor);
+          distances[neighbor as any] = currentDistance + 1;
+          console.log(source + " " + (currentDistance + 1));
+        }
+      }
+    }
+
+    // Remove null and 0 values resulting from the source node
+    const filtered = distances.filter(
+      (distance) => distance !== null && distance !== 0
+    );
+    return filtered;
   }
 
   public getEdges(): Edge<T>[] {
