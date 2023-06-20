@@ -134,7 +134,7 @@ const App = () => {
   };
   const runMeanDistance = () => {
     if (graph) {
-      setMessage(`Mean distance: ${new MeanDistance(graph).getMeanDistance()}`);
+      setMeanDistance(new MeanDistance(graph).printAllDistances());
     } else {
       setMessage("No graph to get mean distance");
     }

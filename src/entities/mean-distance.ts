@@ -10,12 +10,19 @@ export class MeanDistance<T> {
     this.graph = graph;
   }
 
-  public getMeanDistance(): number {
+  public getMeanDistance(allDistances?: { [key: string]: number[] }): number {
     const nodes = this.graph.getNodes();
     let sum = 0;
     let count = 0;
     for (const node of nodes) {
-      const distances = this.getDistances(node.data);
+      // If allDistances is passed as an argument, use it
+      let distances: number[];
+      if (allDistances) {
+        distances = allDistances[node.data as any];
+      } else {
+        distances = this.getDistances(node.data);
+      }
+
       for (const distance of distances) {
         if (distance === undefined || distance === Infinity) {
           continue;
@@ -57,5 +64,35 @@ export class MeanDistance<T> {
       (distance) => distance !== null && distance !== 0
     );
     return filtered;
+  }
+
+  public getAllDistances(): { [key: string]: number[] } {
+    // Return an object with all distances from all nodes to all other nodes
+
+    const distances: { [key: string]: number[] } = {};
+    const nodes = this.graph.getNodes();
+    for (const node of nodes) {
+      distances[node.data as any] = this.getDistances(node.data);
+    }
+    return distances;
+  }
+
+  public printAllDistances(): string {
+    // Return a string with the mean distance for the entire graph and
+    // all distances from all nodes to all other nodes
+
+    const distances = this.getAllDistances();
+
+    // mean distance
+    let output = `The mean distance between all nodes is ${this.getMeanDistance(
+      distances
+    ).toFixed(2)}\n\n`;
+
+    // all distances
+    for (const key in distances) {
+      output += `${key}: [ ${distances[key].join(", ")} ]\n`;
+    }
+
+    return output;
   }
 }
