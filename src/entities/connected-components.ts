@@ -44,9 +44,11 @@ export class ConnectedComponents<T> {
     let output = "";
     output += `There are ${components.length} connected components in this graph.\n\n`;
     for (const component of components) {
-      output += `Component ${components.indexOf(component) + 1}: [ `;
+      output += `Component #${components.indexOf(component) + 1}: ${
+        component.length
+      } nodes \n[ `;
       output += component.map((node) => node.data).join(", ");
-      output += " ]\n";
+      output += " ]\n\n";
     }
     return output;
   }
