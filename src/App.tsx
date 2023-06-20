@@ -54,6 +54,7 @@ const App = () => {
   // shortest path
   const [sourceNode, setSourceNode] = useState<string | null>(null);
   const [targetNode, setTargetNode] = useState<string | null>(null);
+  const [shortestPath, setShortestPath] = useState<string>("");
 
   const carregar = async () => {
     if (mododeOperacao === "string") {
@@ -454,7 +455,7 @@ const App = () => {
             <br></br>
             <textarea
               className="font-mono w-[90%] h-[300px] border-2 border-gray-500 p-2 focus:outline-none text-xl"
-              value={mst}
+              value={shortestPath}
               readOnly
             ></textarea>
           </div>
