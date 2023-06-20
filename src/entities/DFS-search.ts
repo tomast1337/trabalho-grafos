@@ -56,4 +56,37 @@ export class DFSSearch {
     this.DFS();
     return [this.path, this.searchTree];
   }
+
+  public printPath(): string {
+    let output = "";
+    output += `Path from ${this.graph.getNodes()[0].data} to ${
+      this.endNode
+    }:\n`;
+    output += this.path.join(" -> ");
+    return output;
+  }
+
+  public printSearchTree(): string {
+    let output = "";
+    output += `Search tree:\n`;
+    output += this.searchTree.edgesString();
+    return output;
+  }
+
+  public printAdjacencyList(): string {
+    let output = "";
+    output += `Adjacency list:\n`;
+    output += this.searchTree.printAdjacencyList();
+    return output;
+  }
+
+  public print(): string {
+    return (
+      this.printPath() +
+      "\n\n" +
+      this.printSearchTree() +
+      "\n\n" +
+      this.printAdjacencyList()
+    );
+  }
 }

@@ -37,6 +37,8 @@ const App = () => {
 
   // search
   const [endNode, setEndNode] = useState<string | null>(null);
+  const [bfs, setBfs] = useState<string>("");
+  const [dfs, setDfs] = useState<string>("");
 
   // adjacencymatrix
   const [adjacencyMatrix, setAdjacencyMatrix] = useState<string>("");
@@ -164,6 +166,7 @@ const App = () => {
 
       const bfs = new BFSSearch(graph, end);
       const [path, tree] = bfs.search();
+      setBfs(bfs.print());
       return tree;
     } else {
       setMessage("No graph to run BFS");
@@ -179,6 +182,7 @@ const App = () => {
 
       const dfs = new DFSSearch(graph, end);
       const [path, tree] = dfs.search();
+      setDfs(dfs.print());
       return tree;
     } else {
       setMessage("No graph to run DFS");
@@ -541,6 +545,18 @@ const App = () => {
                 <canvas ref={canvasBFSRef} width="400px" height="400px" />
                 <canvas ref={canvasDFSRef} width="400px" height="400px" />
               </div>
+            </div>
+            <div className="flex flex-row gap-8 items-center bg-white shadow-xl rounded-lg p-5 mb-5">
+              <textarea
+                className="font-mono w-[90%] h-[300px] border-2 border-gray-500 p-2 focus:outline-none text-xl"
+                value={bfs}
+                readOnly
+              ></textarea>
+              <textarea
+                className="font-mono w-[90%] h-[300px] border-2 border-gray-500 p-2 focus:outline-none text-xl"
+                value={dfs}
+                readOnly
+              ></textarea>
             </div>
           </div>
         </section>
