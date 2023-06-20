@@ -20,6 +20,11 @@ export class ConnectedComponents<T> {
       }
     }
 
+    // Sort components by size
+    connectedComponents.sort((a, b) => {
+      return a.length > b.length ? -1 : 1;
+    });
+
     return connectedComponents;
   }
 
