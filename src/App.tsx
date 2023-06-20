@@ -8,6 +8,7 @@ import { AdjacencyMatrix } from "./entities/adjacency-matrix";
 import { BFSSearch } from "./entities/BFS-search";
 import { DFSSearch } from "./entities/DFS-search";
 import { ConnectedComponents } from "./entities/connected-components";
+import { MeanDistance } from "./entities/mean-distance";
 
 const App = () => {
   const [message, setMessage] = useState("");
@@ -133,7 +134,7 @@ const App = () => {
   };
   const runMeanDistance = () => {
     if (graph) {
-      setMessage(`Mean distance: ${graph.getMeanDistance()}`);
+      setMessage(`Mean distance: ${new MeanDistance(graph).getMeanDistance()}`);
     } else {
       setMessage("No graph to get mean distance");
     }
