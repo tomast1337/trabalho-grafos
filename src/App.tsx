@@ -207,19 +207,18 @@ const App = () => {
                 Trabalho grafo
               </h1>
               <h2 className="text-lg  font-bold text-black mt-5">Alunos:</h2>
-              <p>
-                Bernardo Martins Corrêa D'Abreu e Costa 
-              </p>
-              <p>
-              Nicolas Vycas Nery
-              </p>
+              <p>Bernardo Martins Corrêa D'Abreu e Costa</p>
+              <p>Nicolas Vycas Nery</p>
               <hr className="my-5 border-gray-500 w-full" />
               <p>
-              View the source code on <a 
-              className="text-blue-500"
-              href="https://github.com/tomast1337/trabalho-grafos">GitHub</a>
+                View the source code on{" "}
+                <a
+                  className="text-blue-500"
+                  href="https://github.com/tomast1337/trabalho-grafos"
+                >
+                  GitHub
+                </a>
               </p>
-              
             </div>
 
             <img
@@ -319,6 +318,8 @@ const App = () => {
             </button>
           </div>
         </section>
+
+        {/* ADJACENCY MATRIX & LIST */}
         <section
           className={`grid ${
             isLoaded ? "" : "hidden"

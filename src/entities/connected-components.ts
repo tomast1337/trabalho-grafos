@@ -41,7 +41,7 @@ export class ConnectedComponents<T> {
     for (const component of components) {
       output += `Component ${components.indexOf(component) + 1}: [ `;
       output += component.map((node) => node.data).join(", ");
-      output += "] \n";
+      output += " ]\n";
     }
     return output;
   }
