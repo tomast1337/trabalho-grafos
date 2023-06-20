@@ -117,10 +117,25 @@ export class Graph<T> {
   }
 
   public save(): string {
+    let nodesString = "";
+
+    nodesString += `# n = ${this.getNodes().length}\n`; // number of nodes
+    nodesString += `# m = ${this.getEdges().length}\n`; // number of edges
+    nodesString += `# d_medio = ${this.getMeanDegree()}\n`; // mean degree
+    nodesString += "\n";
+
+    // degree distribution
+    nodesString += "# distribuição do grau dos vértices: \n";
+    const distribution = this.getDegreeDistribution();
+    for (const degree in distribution) {
+      nodesString += `# grau ${degree} = ${distribution[degree]}\n`;
+    }
+
     const edges = this.edgesString();
     // get all unconected nodes
     const nodes = this.getAllUnconnectedNodes();
-    const nodesString = nodes.map((node) => node.data).join("\n");
+
+    nodesString += nodes.map((node) => node.data).join("\n");
     return `${nodesString}\n${edges}`;
   }
 
@@ -135,5 +150,39 @@ export class Graph<T> {
     } else {
       return [];
     }
+  }
+
+  public getDegree(currentNode: T) {
+    const node = this.getNode(currentNode);
+    if (node) {
+      return node.getNeighbors().length;
+    } else {
+      return 0;
+    }
+  }
+
+  public getMeanDegree() {
+    const nodes = this.getNodes();
+    const sum = nodes.reduce(
+      (acc, node) => acc + node.getNeighbors().length,
+      0
+    );
+    return sum / nodes.length;
+  }
+
+  public getDegreeDistribution() {
+    const nodes = this.getNodes();
+    const distribution: { [key: string]: number } = {};
+
+    for (const node of nodes) {
+      const degree = node.getNeighbors().length;
+      if (distribution[degree]) {
+        distribution[degree] += 1;
+      } else {
+        distribution[degree] = 1;
+      }
+    }
+
+    return distribution;
   }
 }
