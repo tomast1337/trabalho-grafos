@@ -22,6 +22,8 @@ const App = () => {
 1 5`);
   const [isLoaded, setIsLoaded] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const canvasBFSRef = useRef<HTMLCanvasElement>(null);
+  const canvasDFSRef = useRef<HTMLCanvasElement>(null);
   const [canvasCurrent, setCanvasCurrent] = useState<HTMLCanvasElement | null>(
     null
   );
@@ -73,7 +75,7 @@ const App = () => {
       setMessage(e.message || "Erro desconhecido");
     }
     if (graph && canvasCurrent) {
-      const d = new GraphDrawer<string>(graph, canvasCurrent, seed);
+      const d = new GraphDrawer(graph, canvasCurrent, seed);
       d.start();
       setDrawer(d);
     }
@@ -129,32 +131,32 @@ const App = () => {
       setMessage("No graph to get mean distance");
     }
   };
-  const runBFS = () => {
+  const runBFS = (): Graph<string> => {
     if (graph) {
       const end = endNode;
       if (!end) {
         setMessage("Search node is required");
-        return;
+        throw new Error("Search node is required");
       }
 
       const bfs = new BFSSearch(graph, end);
-      const path = bfs.search();
-      setMessage(`Path: ${path.join(" -> ")}`);
+      const [path, tree] = bfs.search();
+      return tree;
     } else {
       setMessage("No graph to run BFS");
     }
   };
-  const runDFS = () => {
+  const runDFS = (): Graph<string> => {
     if (graph) {
       const end = endNode;
       if (!end) {
         setMessage("Search node is required");
-        return;
+        throw new Error("Search node is required");
       }
 
       const dfs = new DFSSearch(graph, end);
-      const path = dfs.search();
-      setMessage(`Path: ${path.join(" -> ")}`);
+      const [path, tree] = dfs.search();
+      return tree;
     } else {
       setMessage("No graph to run DFS");
     }
@@ -336,6 +338,8 @@ const App = () => {
                 Get mean distance
               </button>
             </div>
+          </div>
+          <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 mb-5">
             <h1 className="text-2xl text-center font-bold">Search</h1>
             <div className="flex flex-col items-center p-5 mb-5">
               <div className="grid grid-cols-1 gap-4 mb-5">
@@ -354,19 +358,36 @@ const App = () => {
                 </label>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 w-full">
+              <div className="grid grid-cols-1 gap-4 w-full">
                 <button
                   className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                  onClick={runBFS}
+                  onClick={() => {
+                    const BFSgraph = runBFS();
+                    const DFSgraph = runDFS();
+                    if (canvasBFSRef.current && canvasDFSRef.current) {
+                      const d1 = new GraphDrawer(
+                        BFSgraph,
+                        canvasBFSRef.current,
+                        seed,
+                        true
+                      );
+                      const d2 = new GraphDrawer(
+                        DFSgraph,
+                        canvasDFSRef.current,
+                        seed,
+                        true
+                      );
+                      d1.start();
+                      d2.start();
+                    }
+                  }}
                 >
-                  BFS (Breadth-first search)
+                  BFS (Breadth-first search) and DFS (Depth-first search)
                 </button>
-                <button
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                  onClick={runDFS}
-                >
-                  DFS (Depth-first search)
-                </button>
+              </div>
+              <div className="grid grid-cols-2 gap-4 w-full mt-5">
+                <canvas ref={canvasBFSRef} width="400px" height="400px" />
+                <canvas ref={canvasDFSRef} width="400px" height="400px" />
               </div>
             </div>
           </div>
