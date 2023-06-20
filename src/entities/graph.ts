@@ -66,6 +66,10 @@ export class Graph<T> {
 
     for (const node of this.nodes.values()) {
       for (const neighbor of node.getNeighbors()) {
+        // make node 1 the smaller node
+        if (node.data > neighbor.data) {
+          continue;
+        }
         edges.add({
           node1: node,
           node2: neighbor,
