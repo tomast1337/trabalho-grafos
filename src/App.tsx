@@ -288,7 +288,11 @@ const App = () => {
             </button>
           </div>
         </section>
-        <section className="grid grid-cols-2">
+        <section
+          className={`grid ${
+            isLoaded ? "" : "hidden"
+          } grid grid-cols-2 gap-4 w-full`}
+        >
           <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 mb-5">
             <h1 className="text-2xl text-center font-bold">Adjacency matrix</h1>
             <textarea
