@@ -9,7 +9,7 @@ import { BFSSearch } from "./entities/BFS-search";
 import { DFSSearch } from "./entities/DFS-search";
 import { ConnectedComponents } from "./entities/connected-components";
 import { MeanDistance } from "./entities/mean-distance";
-import { Dijkstra } from "./entities/djikstra";
+import { Dijkstra } from "./entities/dijkstra";
 
 const App = () => {
   const [message, setMessage] = useState("");
