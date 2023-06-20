@@ -5,11 +5,18 @@ export class GNode<T> {
   public neighbors: Map<GNode<T>, number>;
   public color?: string;
   public position?: [number, number];
-
+  public extras?: { [key: string]: string }; // for storing extra data
   constructor(data: T) {
     this.data = data;
     this.neighbors = new Map<GNode<T>, number>();
   }
+
+  public addExtras(key: string, value: string) {
+    if (!this.extras) {
+        this.extras = {};
+    }
+    this.extras[key] = value;
+    }
 
   public addNeighbor(neighbor: GNode<T>, weight = 1) {
     this.neighbors.set(neighbor, weight);
