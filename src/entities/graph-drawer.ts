@@ -1,12 +1,11 @@
-import rough from "roughjs";
-import { Graph } from "./graph";
-import { GNode } from "./node";
-import { RoughSVG } from "roughjs/bin/svg";
 import { RandomSeed, create } from "random-seed";
-import { Edge } from "./edge";
+import rough from "roughjs";
 import { RoughCanvas } from "roughjs/bin/canvas";
 import { getRandColor } from "../utils/color";
+import { Edge } from "./edge";
 import { FruchtermanReingold } from "./fruchterman-reingold";
+import { Graph } from "./graph";
+import { GNode } from "./node";
 
 export class GraphDrawer {
   private graph: Graph<string>;
@@ -17,13 +16,20 @@ export class GraphDrawer {
   private radius = 15;
   private renderHandler: number | null = null;
   private simulation: FruchtermanReingold<string>;
+  private isSearch: boolean;
 
-  constructor(graph: Graph<string>, canvas: HTMLCanvasElement, seed = "seed") {
+  constructor(
+    graph: Graph<string>,
+    canvas: HTMLCanvasElement,
+    seed = "seed",
+    isSearch = false
+  ) {
     this.graph = graph;
     this.canvas = canvas;
     this.rc = rough.canvas(this.canvas);
     this.context = this.canvas.getContext("2d") as CanvasRenderingContext2D;
     this.random = create(seed);
+    this.isSearch = isSearch;
     for (const node of this.graph.getNodes()) {
       node.color = getRandColor(this.random);
     }
@@ -58,7 +64,10 @@ export class GraphDrawer {
     if (typeof node.data === "string") {
       context.font = "20px Arial";
       context.fillStyle = "black";
-      context.fillText(node.data.toString(), x - 5, y + 5);
+      const text = this.isSearch // if search tree, show depth of node beside the node data
+        ? `${node.data.toString()} depth: ${node.extras?.depth || 0}`
+        : node.data.toString();
+      context.fillText(text, x - 5, y + 5);
     }
   }
   private drawEdges(edges: Array<Edge<string>>) {
@@ -78,8 +87,8 @@ export class GraphDrawer {
     const [dx, dy] = [x2 - x1, y2 - y1];
     const [d, theta] = [Math.sqrt(dx * dx + dy * dy), Math.atan2(dy, dx)];
     const [x, y] = [
-      x1 + (Math.cos(theta) * d) / 2 ,
-      y1 + (Math.sin(theta) * d) / 2 ,
+      x1 + (Math.cos(theta) * d) / 2,
+      y1 + (Math.sin(theta) * d) / 2,
     ];
     context.font = "20px Arial";
     context.fillStyle = "red";
