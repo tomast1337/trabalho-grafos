@@ -7,13 +7,14 @@ export class Graph<T> {
     this.nodes = new Map<T, GNode<T>>();
   }
 
-  public addNode(data: T) {
+  public addNode(data: T): GNode<T> {
     // check if node already exists
     if (this.nodes.has(data)) {
-      return;
+      return this.nodes.get(data) as GNode<T>;
     }
     const newNode = new GNode<T>(data);
     this.nodes.set(data, newNode);
+    return newNode;
   }
 
   public addGNode(node: GNode<T>) {
