@@ -4,8 +4,9 @@ export class BFSSearch {
   private graph: Graph<string>;
   private endNode: string;
   private visited: Set<string>;
-  private queue: Array<string>;
-  private path: Array<string>;
+  private queue: string[];
+  private path: string[];
+  private searchTree: Graph<string>;
 
   constructor(graph: Graph<string>, endNode: string) {
     this.graph = graph;
@@ -13,11 +14,15 @@ export class BFSSearch {
     this.visited = new Set();
     this.queue = [];
     this.path = [];
+    this.searchTree = new Graph<string>();
   }
 
   private BFS(): void {
-    this.visited.add(this.graph.getNodes()[0].data);
-    this.queue.push(this.graph.getNodes()[0].data);
+    const startNode = this.graph.getNodes()[0].data;
+    this.visited.add(startNode);
+    this.queue.push(startNode);
+    const startSearchNode = this.searchTree.addNode(startNode);
+    startSearchNode.addExtras("depth", "0");
     while (this.queue.length > 0) {
       const currentNode = this.queue.shift();
       if (currentNode) {
@@ -30,14 +35,23 @@ export class BFSSearch {
           if (!this.visited.has(neighbor)) {
             this.visited.add(neighbor);
             this.queue.push(neighbor);
+            const newNode = this.searchTree.addNode(neighbor);
+            const currentDepth =
+              this.searchTree.getNode(currentNode)?.extras?.depth || "0";
+            newNode.addExtras("depth", `${parseInt(currentDepth) + 1}` || "0");
+            this.searchTree.addEdge(currentNode, neighbor, 1);
           }
         }
       }
     }
   }
 
-  public search(): string[] {
+  public search(): [string[], Graph<string>] {
     this.BFS();
-    return this.path;
+    return [this.path, this.searchTree];
+  }
+
+  public getSearchTree(): Graph<string> {
+    return this.searchTree;
   }
 }
