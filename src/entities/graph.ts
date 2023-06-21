@@ -2,7 +2,7 @@ import { GNode } from "./node";
 import { Edge } from "./edge";
 export class Graph<T> {
   nodes: Map<T, GNode<T>>;
-    
+
   constructor() {
     this.nodes = new Map<T, GNode<T>>();
   }
@@ -185,12 +185,9 @@ export class Graph<T> {
   }
 
   public areWeightsEqual() {
-    const weight = this.getEdges()[0].weight;
-    this.getEdges().forEach((edge) => {
-      if (edge.weight !== weight) {
-        return false;
-      }
-    });
-    return true;
+    const weights = this.getEdges().map((edge) => edge.weight);
+    // check if all weights are equal
+    const result = weights.every((val, _, arr) => val === arr[0]);
+    return result;
   }
 }
