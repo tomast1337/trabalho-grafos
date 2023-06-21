@@ -83,7 +83,7 @@ export class GraphDrawer {
     const [x2, y2] = edge.node2.position || [0, 0];
     const color = edge.color || "black";
     const weight = edge.weight || 1;
-    rc.line(x1, y1, x2, y2, { roughness: 2, stroke: color });
+    rc.line(x1, y1, x2, y2, { stroke: color });
     const [dx, dy] = [x2 - x1, y2 - y1];
     const [d, theta] = [Math.sqrt(dx * dx + dy * dy), Math.atan2(dy, dx)];
     const [x, y] = [
