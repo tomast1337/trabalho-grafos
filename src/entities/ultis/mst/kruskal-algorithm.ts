@@ -1,6 +1,6 @@
-import { Edge } from "./edge";
-import { Graph } from "./graph";
-import { GNode } from "./node";
+import { Edge } from "../../edge";
+import { Graph } from "../../graph";
+import { GNode } from "../../node";
 
 export class KruskalAlgorithm<T> {
   private find(parents: Map<GNode<T>, GNode<T>>, node: GNode<T>): GNode<T> {

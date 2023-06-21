@@ -1,8 +1,5 @@
-import { Graph } from "./graph";
-import type { GNode } from "./node";
-
+import { Graph } from "../../graph";
 // Generate adjacency matrix from graph
-
 export class MeanDistance<T> {
   private graph: Graph<T>;
 

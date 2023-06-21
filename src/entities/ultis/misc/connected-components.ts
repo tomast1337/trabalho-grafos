@@ -1,5 +1,6 @@
-import { Graph } from "./graph";
-import { GNode } from "./node";
+import { Graph } from "../../graph";
+import { GNode } from "../../node";
+
 
 export class ConnectedComponents<T> {
   private graph: Graph<T>;

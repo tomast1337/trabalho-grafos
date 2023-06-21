@@ -1,16 +1,16 @@
 import { useEffect, useRef, useState } from "react";
-import { GraphLoader } from "./entities/graph-loader";
-import { GraphDrawer } from "./entities/graph-drawer";
 import { Graph } from "./entities/graph";
-import { PrimAlgorithm } from "./entities/prim-algorithm";
-import { KruskalAlgorithm } from "./entities/kruskal-algorithm";
-import { AdjacencyMatrix } from "./entities/adjacency-matrix";
-import { BFSSearch } from "./entities/BFS-search";
-import { DFSSearch } from "./entities/DFS-search";
-import { ConnectedComponents } from "./entities/connected-components";
-import { MeanDistance } from "./entities/mean-distance";
-import { Dijkstra } from "./entities/dijkstra";
-import { BFSPath } from "./entities/BFS-path";
+import { GraphDrawer } from "./entities/ultis/draw/graph-drawer";
+import { AdjacencyMatrix } from "./entities/ultis/misc/adjacency-matrix";
+import { ConnectedComponents } from "./entities/ultis/misc/connected-components";
+import { GraphLoader } from "./entities/ultis/misc/graph-loader";
+import { MeanDistance } from "./entities/ultis/misc/mean-distance";
+import { KruskalAlgorithm } from "./entities/ultis/mst/kruskal-algorithm";
+import { PrimAlgorithm } from "./entities/ultis/mst/prim-algorithm";
+import { BFSPath } from "./entities/ultis/path_finding/BFS-path";
+import { Dijkstra } from "./entities/ultis/path_finding/dijkstra-path";
+import { BFSSearch } from "./entities/ultis/search/BFS-search";
+import { DFSSearch } from "./entities/ultis/search/DFS-search";
 
 const App = () => {
   const [message, setMessage] = useState("");
@@ -217,26 +217,13 @@ const App = () => {
         console.log("Weights are equal, using BFS");
         const bfsPath = new BFSPath(graph, source, target);
         const [path, pathTree] = bfsPath.findShortestPath();
-        console.log("Shortest distance:", path.distance);
         console.log("Shortest path:", path.join(" -> "));
       } else {
         // Create an instance of Dijkstra
-        const dijkstra = new Dijkstra(graph);
-
+        const dijkstra = new Dijkstra(graph, source, target);
         // Find the shortest path between two nodes
-        const path = dijkstra.findShortestPath("1", "4");
-        console.log("Shortest distance:", path.distance);
-        console.log("Shortest path:", path.path.join(" -> "));
-
-        // Find the shortest paths from a specific node to all other nodes
-
-        for (const [node, path] of paths) {
-          console.log(`Shortest distance from 1 to ${node}:`, path.distance);
-          console.log(
-            `Shortest path from 1 to ${node}:`,
-            path.path.join(" -> ")
-          );
-        }
+        const [path, pathTree] = dijkstra.findShortestPath();
+        console.log("Shortest path:", path.join(" -> "));
       }
     }
   };

@@ -1,4 +1,4 @@
-import { Graph } from "./graph";
+import { Graph } from "../../graph";
 
 export class BFSPath {
   private graph: Graph<string>;

@@ -1,60 +1,58 @@
-import { Graph } from "./graph";
-export class DFSSearch {
+import { Graph } from "../../graph";
+
+export class BFSSearch {
   private graph: Graph<string>;
   private endNode: string;
   private visited: Set<string>;
-  private stack: Array<string>;
-  private path: Array<string>;
+  private queue: string[];
+  private path: string[];
   private searchTree: Graph<string>;
+
   constructor(graph: Graph<string>, endNode: string) {
     this.graph = graph;
     this.endNode = endNode;
     this.visited = new Set();
-    this.stack = [];
+    this.queue = [];
     this.path = [];
     this.searchTree = new Graph<string>();
-
-    this.stack.push(this.graph.getNodes()[0].data);
   }
 
-  private DFSUtil(node: string, depth: string): void {
-    this.visited.add(node);
-    this.path.push(node);
-    if (node === this.endNode) {
-      return;
-    }
-    const neighbors = this.graph.getNeighbors(node);
-    for (const neighbor of neighbors) {
-      if (!this.visited.has(neighbor)) {
-        const newNode = this.searchTree.addNode(neighbor);
-        this.searchTree.addEdge(node, neighbor, 1);
-        newNode.addExtras("depth", `${parseInt(depth) + 1}`);
-        this.DFSUtil(neighbor, `${depth + 1}`);
-      }
-    }
-  }
-
-  private DFS(): void {
+  private BFS(): void {
     const startNode = this.graph.getNodes()[0].data;
-    this.stack.push(startNode);
-    this.searchTree.addNode(startNode);
-    const startSearchNode = this.searchTree.getNode(startNode);
-    if (startSearchNode) {
-      startSearchNode.addExtras("depth", "0");
-    }
-
-    while (this.stack.length > 0) {
-      const currentNode = this.stack.pop();
+    this.visited.add(startNode);
+    this.queue.push(startNode);
+    const startSearchNode = this.searchTree.addNode(startNode);
+    startSearchNode.addExtras("depth", "0");
+    while (this.queue.length > 0) {
+      const currentNode = this.queue.shift();
       if (currentNode) {
-        const currentDepth =
-          this.searchTree.getNode(currentNode)?.extras?.depth || "0";
-        this.DFSUtil(currentNode, currentDepth);
+        this.path.push(currentNode);
+        if (currentNode === this.endNode) {
+          return;
+        }
+        const neighbors = this.graph.getNeighbors(currentNode);
+        for (const neighbor of neighbors) {
+          if (!this.visited.has(neighbor)) {
+            this.visited.add(neighbor);
+            this.queue.push(neighbor);
+            const newNode = this.searchTree.addNode(neighbor);
+            const currentDepth =
+              this.searchTree.getNode(currentNode)?.extras?.depth || "0";
+            newNode.addExtras("depth", `${parseInt(currentDepth) + 1}` || "0");
+            this.searchTree.addEdge(currentNode, neighbor, 1);
+          }
+        }
       }
     }
   }
+
   public search(): [string[], Graph<string>] {
-    this.DFS();
+    this.BFS();
     return [this.path, this.searchTree];
+  }
+
+  public getSearchTree(): Graph<string> {
+    return this.searchTree;
   }
 
   public printPath(): string {

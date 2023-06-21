@@ -1,6 +1,5 @@
-import { Edge } from "./edge";
-import { Graph } from "./graph";
-import { GNode } from "./node";
+import { Graph } from "../../graph";
+import { GNode } from "../../node";
 
 export class PrimAlgorithm<T> {
   public primMST(graph: Graph<T>): Graph<T> {
