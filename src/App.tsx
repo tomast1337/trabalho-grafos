@@ -252,7 +252,7 @@ const App = () => {
           message === "" ? "hidden" : ""
         } fixed bottom-0 left-[25%] w-1/2 bg-red-600/80 outline outline-red-500 shadow-xl rounded-lg p-3 mb-5 `}
       >
-        <p className="text-2xl text-center font-bold text-white">{message}</p>
+        <p className="text-lg text-center font-bold text-white">{message}</p>
 
         <button
           className="absolute top-0 right-0 p-2 text-lg text-white font-bold"
@@ -264,12 +264,12 @@ const App = () => {
         </button>
       </div>
 
-      <article className="w-full px-20 grid grid-cols-1">
+      <article className="w-full px-20 grid grid-cols-1 max-w-[1200px] mx-auto">
         <header>
           <section className="grid grid-cols-2 gap-4 w-full mb-5 my-5">
             <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5">
-              <h1 className="text-5xl text-center font-bold text-black ">
-                Trabalho grafo
+              <h1 className="text-4xl text-center font-bold text-black ">
+                Biblioteca de grafos
               </h1>
               <h2 className="text-lg  font-bold text-black mt-5">Alunos:</h2>
               <p>Bernardo Martins Corrêa D'Abreu e Costa</p>
@@ -295,10 +295,10 @@ const App = () => {
         </header>
 
         {/* OPERATION MODE & INPUT DATA */}
-        <section className="grid grid-cols-2 gap-4 w-full mb-5">
-          <div className="flex flex-col items-center justify-around bg-white shadow-xl rounded-lg p-5">
+        <section className="grid grid-cols-2 gap-4 w-full mb-5 h-[20rem]">
+          <div className="flex flex-col items-center justify-around bg-white shadow-xl rounded-lg p-5 h-[20rem]">
             <div className="flex flex-row w-full justify-around items-center">
-              <h2 className="text-2xl text-center font-bold">Operation mode</h2>
+              <h2 className="text-xl text-center font-bold">Operation mode</h2>
 
               <div className="flex flex-row justify-center items-center">
                 {/* Check box slider */}
@@ -343,19 +343,18 @@ const App = () => {
                 Load graph
               </button>
               <button
-                className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ${
-                  isLoaded ? "" : "hidden"
-                }`}
+                className="bg-blue-500 hover:enabled:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:opacity-60"
+                disabled={!graph}
                 onClick={() => saveGraph("graph.txt")}
               >
                 Save graph
               </button>
             </div>
           </div>
-          <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 ">
+          <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 h-[20rem]">
             {mododeOperacao === "string" ? (
               <>
-                <h2 className="text-2xl text-center font-bold">Data</h2>
+                <h2 className="text-xl text-center font-bold">Data</h2>
                 <textarea
                   className="w-[90%] h-[300px] border-2 border-gray-500 p-2 focus:outline-none text-xl"
                   onChange={(e) => {
@@ -366,7 +365,7 @@ const App = () => {
               </>
             ) : (
               <>
-                <h2 className="text-2xl text-center font-bold">Arquivo</h2>
+                <h2 className="text-xl text-center font-bold">Arquivo</h2>
                 <div className="w-full h-[100px] flex justify-center items-center">
                   <input
                     type="file"
@@ -387,7 +386,7 @@ const App = () => {
             <canvas ref={canvasRef} className="" width="900px" height="500px" />
           </div>
           <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 mb-5">
-            <h1 className="text-2xl text-center font-bold">Search</h1>
+            <h1 className="text-xl text-center font-bold">Search</h1>
             <div className="flex flex-col items-center p-5 mb-5">
               <div className="grid grid-cols-1 gap-4 mb-5">
                 <label className="flex items-center cursor-pointer">
@@ -441,7 +440,7 @@ const App = () => {
                 <canvas ref={canvasDFSRef} width="400px" height="300px" />
               </div>
             </div>
-            <div className="flex flex-row w-full gap-8 items-center bg-white shadow-xl rounded-lg p-5 mb-5">
+            <div className="flex flex-row w-full gap-8 items-center p-3">
               <textarea
                 className="font-mono w-[90%] h-[300px] border-2 border-gray-500 p-2 focus:outline-none text-xl"
                 value={bfs}
@@ -464,7 +463,7 @@ const App = () => {
         >
           <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5">
             <div className="flex flex-row w-full px-5 pb-2 justify-between items-center">
-              <h1 className="flex-grow text-2xl text-center font-bold">
+              <h1 className="flex-grow text-xl text-center font-bold">
                 Adjacency matrix
               </h1>
               <button
@@ -482,7 +481,7 @@ const App = () => {
           </div>
           <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5">
             <div className="flex flex-row w-full px-5 pb-2 justify-between items-center">
-              <h1 className="text-2xl text-center font-bold">Adjacency list</h1>
+              <h1 className="text-xl text-center font-bold">Adjacency list</h1>
               <button
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                 onClick={runAdjacencyList}
@@ -498,7 +497,7 @@ const App = () => {
           </div>
           <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5">
             <div className="flex flex-row w-full px-5 pb-2 justify-between items-center">
-              <h1 className="text-2xl text-center font-bold">
+              <h1 className="text-xl text-center font-bold">
                 Connected components
               </h1>
               <button
@@ -516,7 +515,7 @@ const App = () => {
           </div>
           <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 mb-5">
             <div className="flex flex-row w-full px-5 pb-2 justify-between items-center">
-              <h1 className="text-2xl text-center font-bold">Mean distance</h1>
+              <h1 className="text-xl text-center font-bold">Mean distance</h1>
               <button
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                 onClick={runMeanDistance}
@@ -532,7 +531,7 @@ const App = () => {
           </div>
           <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 mb-5">
             <div className="flex flex-row w-full px-5 pb-2 justify-between items-center">
-              <h1 className="text-2xl text-center font-bold">MST</h1>
+              <h1 className="text-xl text-center font-bold">MST</h1>
               <div className="flex gap-2">
                 <button
                   className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
@@ -556,7 +555,7 @@ const App = () => {
           </div>
           <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 mb-5">
             <div className="flex flex-row justify-between items-center gap-4 px-4 pb-2">
-              <h1 className="text-2xl text-center font-bold">Shortest path</h1>
+              <h1 className="text-xl text-center font-bold">Shortest path</h1>
               <div className="w-[100px]">
                 <input
                   placeholder="Source node"
