@@ -278,41 +278,61 @@ const App = () => {
         </header>
 
         {/* OPERATION MODE & INPUT DATA */}
-        <section className="grid grid-cols-2 gap-4 w-full mb-5">
-          <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5">
-            <h2 className="text-3xl text-center font-bold">Operation mode</h2>
-            <div className="w-full flex justify-center items-center ">
-              {/* Check box slider */}
-              <label className="flex items-center cursor-pointer">
-                {/* toggle */}
-                <div className="relative">
-                  {/* input */}
-                  <input
-                    type="checkbox"
-                    id="toggle"
-                    className="sr-only"
-                    onChange={(e) => {
-                      setModoDeOperacao(
-                        e.target.checked ? "string" : "arquivo"
-                      );
-                    }}
-                  />
-                  {/* line */}
-                  <div className="block bg-gray-900 w-14 h-8 rounded-full"></div>
-                  {/* dot */}
-                  <div className="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition"></div>
-                </div>
-                {/* label */}
-                <div className="ml-3 text-gray-700 font-medium">
-                  {mododeOperacao === "string" ? "String" : "Arquivo"}
-                </div>
-              </label>
+        <section className="grid grid-cols-2 gap-4 w-full mb-5 transition-all duration-100">
+          <div className="flex flex-col items-center justify-around bg-white shadow-xl rounded-lg p-5">
+            <div className="flex flex-row w-full items-center justify-around">
+              <h2 className="text-2xl text-center font-bold">Operation mode</h2>
+              <div className="flex justify-center items-center ">
+                {/* Check box slider */}
+                <label className="flex items-center cursor-pointer">
+                  {/* toggle */}
+                  <div className="relative">
+                    {/* input */}
+                    <input
+                      type="checkbox"
+                      id="toggle"
+                      className="sr-only"
+                      onChange={(e) => {
+                        setModoDeOperacao(
+                          e.target.checked ? "string" : "arquivo"
+                        );
+                      }}
+                    />
+                    {/* line */}
+                    <div className="block bg-gray-900 w-14 h-8 rounded-full"></div>
+                    {/* dot */}
+                    <div className="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition"></div>
+                  </div>
+                  {/* label */}
+                  <div className="ml-3 text-gray-700 font-medium">
+                    {mododeOperacao === "string" ? "String" : "Arquivo"}
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            {/* LOAD AND SAVE BUTTONS */}
+            <div className="flex flex-row w-full gap-4 items-center justify-center rounded-lg p-5">
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                onClick={carregar}
+              >
+                Load graph
+              </button>
+              <button
+                className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ${
+                  isLoaded ? "" : "hidden"
+                }`}
+                onClick={() => saveGraph("graph.txt")}
+              >
+                Save graph
+              </button>
             </div>
           </div>
           <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 ">
             {mododeOperacao === "string" ? (
               <>
-                <h2 className="text-3xl text-center font-bold">Data</h2>
+                <h2 className="text-2xl text-center font-bold">Data</h2>
                 <textarea
                   className="w-[90%] h-[300px] border-2 border-gray-500 p-2 focus:outline-none text-xl"
                   onChange={(e) => {
@@ -344,27 +364,6 @@ const App = () => {
             <p className="text-3xl text-center font-bold text-red-300">
               {message}
             </p>
-          </div>
-
-          <div
-            className={`grid gap-4 ${
-              isLoaded ? "grid-cols-2" : "grid-cols-1"
-            } bg-white shadow-xl rounded-lg p-5 mb-5`}
-          >
-            <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-              onClick={carregar}
-            >
-              Load
-            </button>
-            <button
-              className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ${
-                isLoaded ? "" : "hidden"
-              }`}
-              onClick={() => saveGraph("graph.txt")}
-            >
-              Save graph
-            </button>
           </div>
         </section>
 
