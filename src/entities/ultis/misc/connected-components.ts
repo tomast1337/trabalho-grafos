@@ -48,7 +48,10 @@ export class ConnectedComponents<T> {
       output += `Component #${components.indexOf(component) + 1}: ${
         component.length
       } nodes \n[ `;
-      output += component.map((node) => node.data).join(", ");
+      output += component
+        .map((node) => node.data)
+        .sort()
+        .join(", ");
       output += " ]\n\n";
     }
     return output;
