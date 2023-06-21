@@ -94,6 +94,15 @@ const App = () => {
       d.start();
       setDrawer(d);
     }
+    setEndNode(null);
+    setBfs("");
+    setDfs("");
+    setAdjacencyMatrix("");
+    setAdjacencyList("");
+    setConnectedComponents("");
+    setMeanDistance("");
+    setMst("");
+    setShortestPath("");
     setIsLoaded(true);
   };
   const saveGraph = (filename: string) => {
