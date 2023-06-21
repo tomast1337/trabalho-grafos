@@ -10,6 +10,7 @@ import { DFSSearch } from "./entities/DFS-search";
 import { ConnectedComponents } from "./entities/connected-components";
 import { MeanDistance } from "./entities/mean-distance";
 import { Dijkstra } from "./entities/dijkstra";
+import { BFSPath } from "./entities/BFS-path";
 
 const App = () => {
   const [message, setMessage] = useState("");
@@ -212,19 +213,30 @@ const App = () => {
     } else if (!source || !target) {
       setMessage("Source and target nodes are required");
     } else {
-      // Create an instance of Dijkstra
-      const dijkstra = new Dijkstra(graph);
+      if (graph.areWeightsEqual()) {
+        console.log("Weights are equal, using BFS");
+        const bfsPath = new BFSPath(graph, source, target);
+        const [path, pathTree] = bfsPath.findShortestPath();
+        console.log("Shortest distance:", path.distance);
+        console.log("Shortest path:", path.join(" -> "));
+      } else {
+        // Create an instance of Dijkstra
+        const dijkstra = new Dijkstra(graph);
 
-      // Find the shortest path between two nodes
-      const path = dijkstra.findShortestPath("1", "4");
-      console.log("Shortest distance:", path.distance);
-      console.log("Shortest path:", path.path.join(" -> "));
+        // Find the shortest path between two nodes
+        const path = dijkstra.findShortestPath("1", "4");
+        console.log("Shortest distance:", path.distance);
+        console.log("Shortest path:", path.path.join(" -> "));
 
-      // Find the shortest paths from a specific node to all other nodes
-      const paths = dijkstra.findShortestPathFromNode("1");
-      for (const [node, path] of paths) {
-        console.log(`Shortest distance from 1 to ${node}:`, path.distance);
-        console.log(`Shortest path from 1 to ${node}:`, path.path.join(" -> "));
+        // Find the shortest paths from a specific node to all other nodes
+
+        for (const [node, path] of paths) {
+          console.log(`Shortest distance from 1 to ${node}:`, path.distance);
+          console.log(
+            `Shortest path from 1 to ${node}:`,
+            path.path.join(" -> ")
+          );
+        }
       }
     }
   };
@@ -247,7 +259,7 @@ const App = () => {
   );
   return (
     <main>
-      <article className="mx-auto w-full max-w-4xl grid grid-cols-1">
+      <article className="w-full px-20 grid grid-cols-1">
         <header>
           <section className="grid grid-cols-2 gap-4 w-full mb-5 my-5">
             <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5">
@@ -278,7 +290,7 @@ const App = () => {
         </header>
 
         {/* OPERATION MODE & INPUT DATA */}
-        <section className="grid grid-cols-2 gap-4 w-full mb-5">
+        <section className="grid grid-cols-3 gap-4 w-full mb-5">
           <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5">
             <h2 className="text-3xl text-center font-bold">Operation mode</h2>
             <div className="w-full flex justify-center items-center ">
@@ -447,7 +459,7 @@ const App = () => {
         <section
           className={`grid ${
             isLoaded ? "" : "hidden"
-          } grid grid-cols-2 gap-4 w-full`}
+          } grid grid-cols-3 gap-4 w-full`}
         >
           <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 mb-5">
             <div className="flex flex-row w-full px-5 pb-2 justify-between items-center">
@@ -483,14 +495,6 @@ const App = () => {
               readOnly
             ></textarea>
           </div>
-        </section>
-
-        {/* CONNECTED COMPONENTS & MEAN DISTANCE */}
-        <section
-          className={`grid ${
-            isLoaded ? "" : "hidden"
-          } grid grid-cols-2 gap-4 w-full`}
-        >
           <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 mb-5">
             <div className="flex flex-row w-full px-5 pb-2 justify-between items-center">
               <h1 className="text-2xl text-center font-bold">
@@ -525,14 +529,6 @@ const App = () => {
               readOnly
             ></textarea>
           </div>
-        </section>
-
-        {/* MST AND SHORTEST PATH */}
-        <section
-          className={`grid ${
-            isLoaded ? "" : "hidden"
-          } grid grid-cols-2 gap-4 w-full`}
-        >
           <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 mb-5">
             <div className="flex flex-row w-full px-5 pb-2 justify-between items-center">
               <h1 className="text-2xl text-center font-bold">MST</h1>
@@ -592,6 +588,20 @@ const App = () => {
             ></textarea>
           </div>
         </section>
+
+        {/* CONNECTED COMPONENTS & MEAN DISTANCE */}
+        <section
+          className={`grid ${
+            isLoaded ? "" : "hidden"
+          } grid grid-cols-2 gap-4 w-full`}
+        ></section>
+
+        {/* MST AND SHORTEST PATH */}
+        <section
+          className={`grid ${
+            isLoaded ? "" : "hidden"
+          } grid grid-cols-2 gap-4 w-full`}
+        ></section>
       </article>
     </main>
   );
