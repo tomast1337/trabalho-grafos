@@ -109,14 +109,22 @@ const App = () => {
       setMessage("No graph to save");
     }
   };
-  const runAdjacencyMatrix = (graph: Graph<string>) => {
-    const matrix = new AdjacencyMatrix<string>(graph);
-    const str = matrix.printMatrix();
-    setAdjacencyMatrix(str);
+  const runAdjacencyMatrix = () => {
+    if (graph) {
+      const matrix = new AdjacencyMatrix<string>(graph);
+      const str = matrix.printMatrix();
+      setAdjacencyMatrix(str);
+    } else {
+      setMessage("No graph to get adjacency matrix");
+    }
   };
-  const runAdjacencyList = (graph: Graph<string>) => {
-    const str = graph.printAdjacencyList();
-    setAdjacencyList(str);
+  const runAdjacencyList = () => {
+    if (graph) {
+      const str = graph.printAdjacencyList();
+      setAdjacencyList(str);
+    } else {
+      setMessage("No graph to get adjacency list");
+    }
   };
   const runKruskal = () => {
     if (graph) {
@@ -366,37 +374,6 @@ const App = () => {
             <canvas ref={canvasRef} className="" width="900px" height="500px" />
           </div>
           <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 mb-5">
-            <h1 className="text-xl text-center font-bold">Options</h1>
-            <div className="grid grid-cols-3 gap-4 w-full mb-5">
-              <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                onClick={runKruskal}
-              >
-                Get MST (Kruskal-algorithm)
-              </button>
-              <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                onClick={runPrim}
-              >
-                Get MST (Prim-algorithm)
-              </button>
-              <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                onClick={runMeanDistance}
-              >
-                Get mean distance
-              </button>
-            </div>
-            <div className="grid grid-cols-3 gap-4 w-full mb-5">
-              <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                onClick={runConnectedComponents}
-              >
-                Connected components
-              </button>
-            </div>
-          </div>
-          <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 mb-5">
             <h1 className="text-2xl text-center font-bold">Search</h1>
             <div className="flex flex-col items-center p-5 mb-5">
               <div className="grid grid-cols-1 gap-4 mb-5">
@@ -491,7 +468,15 @@ const App = () => {
             ></textarea>
           </div>
           <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 mb-5">
-            <h1 className="text-2xl text-center font-bold">Adjacency list</h1>
+            <div className="flex flex-row w-full px-5 pb-2 justify-between items-center">
+              <h1 className="text-2xl text-center font-bold">Adjacency list</h1>
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                onClick={runAdjacencyList}
+              >
+                Run
+              </button>
+            </div>
             <textarea
               className="font-mono w-[90%] h-[300px] border-2 border-gray-500 p-2 focus:outline-none text-xl"
               value={adjacencyList}
@@ -507,9 +492,17 @@ const App = () => {
           } grid grid-cols-2 gap-4 w-full`}
         >
           <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 mb-5">
-            <h1 className="text-2xl text-center font-bold">
-              Connected components
-            </h1>
+            <div className="flex flex-row w-full px-5 pb-2 justify-between items-center">
+              <h1 className="text-2xl text-center font-bold">
+                Connected components
+              </h1>
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                onClick={runConnectedComponents}
+              >
+                Run
+              </button>
+            </div>
             <textarea
               className="font-mono w-[90%] h-[300px] border-2 border-gray-500 p-2 focus:outline-none text-xl"
               value={connectedComponents}
@@ -517,7 +510,15 @@ const App = () => {
             ></textarea>
           </div>
           <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 mb-5">
-            <h1 className="text-2xl text-center font-bold">Mean distance</h1>
+            <div className="flex flex-row w-full px-5 pb-2 justify-between items-center">
+              <h1 className="text-2xl text-center font-bold">Mean distance</h1>
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                onClick={runMeanDistance}
+              >
+                Run
+              </button>
+            </div>
             <textarea
               className="font-mono w-[90%] h-[300px] border-2 border-gray-500 p-2 focus:outline-none text-xl"
               value={meanDistance}
@@ -533,7 +534,23 @@ const App = () => {
           } grid grid-cols-2 gap-4 w-full`}
         >
           <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 mb-5">
-            <h1 className="text-2xl text-center font-bold">MST</h1>
+            <div className="flex flex-row w-full px-5 pb-2 justify-between items-center">
+              <h1 className="text-2xl text-center font-bold">MST</h1>
+              <div className="flex gap-2">
+                <button
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                  onClick={runKruskal}
+                >
+                  Kruskal
+                </button>
+                <button
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                  onClick={runPrim}
+                >
+                  Prim
+                </button>
+              </div>
+            </div>
             <textarea
               className="font-mono w-[90%] h-[300px] border-2 border-gray-500 p-2 focus:outline-none text-xl"
               value={mst}
@@ -541,33 +558,33 @@ const App = () => {
             ></textarea>
           </div>
           <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 mb-5">
-            <h1 className="text-2xl text-center font-bold">Shortest path</h1>
-
-            <input
-              placeholder="Source node"
-              type="text"
-              className="border-2 border-gray-500"
-              value={sourceNode || ""}
-              onChange={(e) => {
-                setSourceNode(e.target.value || null);
-              }}
-            />
-            <input
-              placeholder="Target node"
-              type="text"
-              className="border-2 border-gray-500"
-              value={targetNode || ""}
-              onChange={(e) => {
-                setTargetNode(e.target.value || null);
-              }}
-            />
-            <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-              onClick={runShortestPath}
-            >
-              Get shortest path
-            </button>
-            <br></br>
+            <div className="flex flex-row justify-between gap-2">
+              <h1 className="text-2xl text-center font-bold">Shortest path</h1>
+              <input
+                placeholder="Source node"
+                type="text"
+                className="flex-auto border-2 border-gray-500"
+                value={sourceNode || ""}
+                onChange={(e) => {
+                  setSourceNode(e.target.value || null);
+                }}
+              />
+              <input
+                placeholder="Target node"
+                type="text"
+                className="border-2 border-gray-500"
+                value={targetNode || ""}
+                onChange={(e) => {
+                  setTargetNode(e.target.value || null);
+                }}
+              />
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                onClick={runShortestPath}
+              >
+                Run
+              </button>
+            </div>
             <textarea
               className="font-mono w-[90%] h-[300px] border-2 border-gray-500 p-2 focus:outline-none text-xl"
               value={shortestPath}
