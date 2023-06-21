@@ -217,26 +217,13 @@ const App = () => {
         console.log("Weights are equal, using BFS");
         const bfsPath = new BFSPath(graph, source, target);
         const [path, pathTree] = bfsPath.findShortestPath();
-        console.log("Shortest distance:", path.distance);
         console.log("Shortest path:", path.join(" -> "));
       } else {
         // Create an instance of Dijkstra
-        const dijkstra = new Dijkstra(graph);
-
+        const dijkstra = new Dijkstra(graph, source, target);
         // Find the shortest path between two nodes
-        const path = dijkstra.findShortestPath("1", "4");
-        console.log("Shortest distance:", path.distance);
-        console.log("Shortest path:", path.path.join(" -> "));
-
-        // Find the shortest paths from a specific node to all other nodes
-
-        for (const [node, path] of paths) {
-          console.log(`Shortest distance from 1 to ${node}:`, path.distance);
-          console.log(
-            `Shortest path from 1 to ${node}:`,
-            path.path.join(" -> ")
-          );
-        }
+        const [path, pathTree] = dijkstra.findShortestPath();
+        console.log("Shortest path:", path.join(" -> "));
       }
     }
   };
