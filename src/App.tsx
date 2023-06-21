@@ -442,23 +442,25 @@ const App = () => {
                 width="400px"
                 height="300px"
                 className="border-2 border-gray-500"
+                style={{ width: "45%" }}
               />
               <canvas
                 ref={canvasDFSRef}
                 width="400px"
                 height="300px"
                 className="border-2 border-gray-500"
+                style={{ width: "45%" }}
               />
             </div>
 
-            <div className="flex flex-row w-full gap-8 items-center justify-center p-3">
+            <div className="flex flex-row w-full gap-8 items-center justify-center pt-3">
               <textarea
-                className="font-mono w-[400px] h-[300px] border-2 border-gray-500 p-2 focus:outline-none text-xl"
+                className="font-mono w-[80%] max-w-[45%] h-[300px] border-2 border-gray-500 p-2 focus:outline-none text-xl"
                 value={bfs}
                 readOnly
               ></textarea>
               <textarea
-                className="font-mono w-[400px] h-[300px] border-2 border-gray-500 p-2 focus:outline-none text-xl"
+                className="font-mono w-[80%] max-w-[45%] h-[300px] border-2 border-gray-500 p-2 focus:outline-none text-xl"
                 value={dfs}
                 readOnly
               ></textarea>
