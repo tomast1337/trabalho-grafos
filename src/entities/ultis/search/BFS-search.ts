@@ -1,4 +1,4 @@
-import { Graph } from "./graph";
+import { Graph } from "../../graph";
 
 export class BFSSearch {
   private graph: Graph<string>;
