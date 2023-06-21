@@ -631,6 +631,15 @@ const App = () => {
               <button
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded max-h-[2.5rem]"
                 onClick={() => {
+                  if (
+                    !graph?.areWeightsEqual() &&
+                    !graph?.areAllWeightsNonNegative()
+                  ) {
+                    setMessage(
+                      "The graph contains negative weights, Dijkstra's algorithm cannot be used"
+                    );
+                    return;
+                  }
                   setShortestPath(
                     runShortestPath() + "\n\n" + runAllShortestPaths()
                   );

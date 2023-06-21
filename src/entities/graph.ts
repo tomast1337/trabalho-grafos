@@ -190,4 +190,11 @@ export class Graph<T> {
     const result = weights.every((val, _, arr) => val === arr[0]);
     return result;
   }
+
+  public areAllWeightsNonNegative() {
+    const weights = this.getEdges().map((edge) => edge.weight);
+    // check if all weights are non-negative
+    const result = weights.every((val) => val >= 0);
+    return result;
+  }
 }
