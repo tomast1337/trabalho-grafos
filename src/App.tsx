@@ -466,7 +466,7 @@ const App = () => {
             isLoaded ? "" : "hidden"
           } grid grid-cols-3 gap-4 w-full`}
         >
-          <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 mb-5">
+          <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5">
             <div className="flex flex-row w-full px-5 pb-2 justify-between items-center">
               <h1 className="flex-grow text-2xl text-center font-bold">
                 Adjacency matrix
@@ -484,7 +484,7 @@ const App = () => {
               readOnly
             ></textarea>
           </div>
-          <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 mb-5">
+          <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5">
             <div className="flex flex-row w-full px-5 pb-2 justify-between items-center">
               <h1 className="text-2xl text-center font-bold">Adjacency list</h1>
               <button
@@ -500,7 +500,7 @@ const App = () => {
               readOnly
             ></textarea>
           </div>
-          <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 mb-5">
+          <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5">
             <div className="flex flex-row w-full px-5 pb-2 justify-between items-center">
               <h1 className="text-2xl text-center font-bold">
                 Connected components
@@ -595,20 +595,6 @@ const App = () => {
             ></textarea>
           </div>
         </section>
-
-        {/* CONNECTED COMPONENTS & MEAN DISTANCE */}
-        <section
-          className={`grid ${
-            isLoaded ? "" : "hidden"
-          } grid grid-cols-2 gap-4 w-full`}
-        ></section>
-
-        {/* MST AND SHORTEST PATH */}
-        <section
-          className={`grid ${
-            isLoaded ? "" : "hidden"
-          } grid grid-cols-2 gap-4 w-full`}
-        ></section>
       </article>
     </main>
   );
