@@ -246,6 +246,24 @@ const App = () => {
   );
   return (
     <main>
+      {/* ERROR MESSAGE */}
+      <div
+        className={`${
+          message === "" ? "hidden" : ""
+        } fixed bottom-0 left-[25%] w-1/2 bg-red-600/80 outline outline-red-500 shadow-xl rounded-lg p-3 mb-5 `}
+      >
+        <p className="text-2xl text-center font-bold text-white">{message}</p>
+
+        <button
+          className="absolute top-0 right-0 p-2 text-lg text-white font-bold"
+          onClick={() => {
+            setMessage("");
+          }}
+        >
+          ✖
+        </button>
+      </div>
+
       <article className="w-full px-20 grid grid-cols-1">
         <header>
           <section className="grid grid-cols-2 gap-4 w-full mb-5 my-5">
@@ -360,15 +378,6 @@ const App = () => {
                 </div>
               </>
             )}
-          </div>
-          <div
-            className={`flex flex-col items-center bg-white shadow-xl rounded-lg p-5 mb-5 ${
-              message === "" ? "hidden" : ""
-            }`}
-          >
-            <p className="text-3xl text-center font-bold text-red-300">
-              {message}
-            </p>
           </div>
         </section>
 
