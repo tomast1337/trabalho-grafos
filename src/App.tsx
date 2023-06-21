@@ -386,13 +386,14 @@ const App = () => {
             <canvas ref={canvasRef} className="" width="900px" height="500px" />
           </div>
           <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 mb-5">
-            <h1 className="text-xl text-center font-bold">Search</h1>
-            <div className="flex flex-col items-center p-5 mb-5">
-              <div className="grid grid-cols-1 gap-4 mb-5">
-                <label className="flex items-center cursor-pointer">
-                  <div className="relative">
+            <div className="flex flex-row justify-around items-center gap-4 w-full">
+              <h1 className="text-xl text-center font-bold">BFS & DFS</h1>
+
+              <div className="flex flex-row gap-4 items-center my-auto">
+                <div>
+                  <label className="flex items-center cursor-pointer">
                     <input
-                      placeholder="End node"
+                      placeholder="Search node"
                       type="text"
                       className="border-2 border-gray-500"
                       value={endNode || ""}
@@ -400,11 +401,9 @@ const App = () => {
                         setEndNode(e.target.value || null);
                       }}
                     />
-                  </div>
-                </label>
-              </div>
+                  </label>
+                </div>
 
-              <div className="grid grid-cols-1 gap-4 w-full">
                 <button
                   className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                   onClick={() => {
@@ -432,22 +431,34 @@ const App = () => {
                     }
                   }}
                 >
-                  BFS (Breadth-first search) and DFS (Depth-first search)
+                  Run
                 </button>
               </div>
-              <div className="grid grid-cols-2 gap-4 w-full mt-5">
-                <canvas ref={canvasBFSRef} width="400px" height="300px" />
-                <canvas ref={canvasDFSRef} width="400px" height="300px" />
-              </div>
             </div>
-            <div className="flex flex-row w-full gap-8 items-center p-3">
+
+            <div className="flex flex-row gap-8 items-center w-full justify-center mt-5 mb-2">
+              <canvas
+                ref={canvasBFSRef}
+                width="400px"
+                height="300px"
+                className="border-2 border-gray-500"
+              />
+              <canvas
+                ref={canvasDFSRef}
+                width="400px"
+                height="300px"
+                className="border-2 border-gray-500"
+              />
+            </div>
+
+            <div className="flex flex-row w-full gap-8 items-center justify-center p-3">
               <textarea
-                className="font-mono w-[90%] h-[300px] border-2 border-gray-500 p-2 focus:outline-none text-xl"
+                className="font-mono w-[400px] h-[300px] border-2 border-gray-500 p-2 focus:outline-none text-xl"
                 value={bfs}
                 readOnly
               ></textarea>
               <textarea
-                className="font-mono w-[90%] h-[300px] border-2 border-gray-500 p-2 focus:outline-none text-xl"
+                className="font-mono w-[400px] h-[300px] border-2 border-gray-500 p-2 focus:outline-none text-xl"
                 value={dfs}
                 readOnly
               ></textarea>
