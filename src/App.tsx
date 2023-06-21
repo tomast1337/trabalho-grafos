@@ -85,8 +85,6 @@ const App = () => {
       graph = loader.loadFromText(data);
       setMessage("");
       setGraph(graph);
-      runAdjacencyMatrix(graph);
-      runAdjacencyList(graph);
     } catch (e: any) {
       setMessage(e.message || "Erro desconhecido");
     }
@@ -271,6 +269,7 @@ const App = () => {
           </section>
         </header>
 
+        {/* OPERATION MODE & INPUT DATA */}
         <section className="grid grid-cols-2 gap-4 w-full mb-5">
           <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5">
             <h2 className="text-3xl text-center font-bold">Operation mode</h2>
@@ -361,6 +360,112 @@ const App = () => {
           </div>
         </section>
 
+        {/* GRAPH */}
+        <section className={`grid grid-cols-1 ${isLoaded ? "" : "hidden"}`}>
+          <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 mb-5">
+            <canvas ref={canvasRef} className="" width="900px" height="500px" />
+          </div>
+          <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 mb-5">
+            <h1 className="text-xl text-center font-bold">Options</h1>
+            <div className="grid grid-cols-3 gap-4 w-full mb-5">
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                onClick={runKruskal}
+              >
+                Get MST (Kruskal-algorithm)
+              </button>
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                onClick={runPrim}
+              >
+                Get MST (Prim-algorithm)
+              </button>
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                onClick={runMeanDistance}
+              >
+                Get mean distance
+              </button>
+            </div>
+            <div className="grid grid-cols-3 gap-4 w-full mb-5">
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                onClick={runConnectedComponents}
+              >
+                Connected components
+              </button>
+            </div>
+          </div>
+          <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 mb-5">
+            <h1 className="text-2xl text-center font-bold">Search</h1>
+            <div className="flex flex-col items-center p-5 mb-5">
+              <div className="grid grid-cols-1 gap-4 mb-5">
+                <label className="flex items-center cursor-pointer">
+                  <div className="relative">
+                    <input
+                      placeholder="End node"
+                      type="text"
+                      className="border-2 border-gray-500"
+                      value={endNode || ""}
+                      onChange={(e) => {
+                        setEndNode(e.target.value || null);
+                      }}
+                    />
+                  </div>
+                </label>
+              </div>
+
+              <div className="grid grid-cols-1 gap-4 w-full">
+                <button
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                  onClick={() => {
+                    try {
+                      const BFSgraph = runBFS();
+                      const DFSgraph = runDFS();
+                      if (canvasBFSRef.current && canvasDFSRef.current) {
+                        const d1 = new GraphDrawer(
+                          BFSgraph,
+                          canvasBFSRef.current,
+                          seed,
+                          true
+                        );
+                        const d2 = new GraphDrawer(
+                          DFSgraph,
+                          canvasDFSRef.current,
+                          seed,
+                          true
+                        );
+                        d1.start();
+                        d2.start();
+                      }
+                    } catch (error) {
+                      setMessage(error.message);
+                    }
+                  }}
+                >
+                  BFS (Breadth-first search) and DFS (Depth-first search)
+                </button>
+              </div>
+              <div className="grid grid-cols-2 gap-4 w-full mt-5">
+                <canvas ref={canvasBFSRef} width="400px" height="300px" />
+                <canvas ref={canvasDFSRef} width="400px" height="300px" />
+              </div>
+            </div>
+            <div className="flex flex-row w-full gap-8 items-center bg-white shadow-xl rounded-lg p-5 mb-5">
+              <textarea
+                className="font-mono w-[90%] h-[300px] border-2 border-gray-500 p-2 focus:outline-none text-xl"
+                value={bfs}
+                readOnly
+              ></textarea>
+              <textarea
+                className="font-mono w-[90%] h-[300px] border-2 border-gray-500 p-2 focus:outline-none text-xl"
+                value={dfs}
+                readOnly
+              ></textarea>
+            </div>
+          </div>
+        </section>
+
         {/* ADJACENCY MATRIX & LIST */}
         <section
           className={`grid ${
@@ -368,7 +473,17 @@ const App = () => {
           } grid grid-cols-2 gap-4 w-full`}
         >
           <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 mb-5">
-            <h1 className="text-2xl text-center font-bold">Adjacency matrix</h1>
+            <div className="flex flex-row w-full px-5 pb-2 justify-between items-center">
+              <h1 className="text-2xl text-center font-bold">
+                Adjacency matrix
+              </h1>
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                onClick={runAdjacencyMatrix}
+              >
+                Run
+              </button>
+            </div>
             <textarea
               className="font-mono w-[90%] h-[300px] border-2 border-gray-500 p-2 focus:outline-none text-xl"
               value={adjacencyMatrix}
@@ -458,111 +573,6 @@ const App = () => {
               value={shortestPath}
               readOnly
             ></textarea>
-          </div>
-        </section>
-
-        <section className={`grid grid-cols-1 ${isLoaded ? "" : "hidden"}`}>
-          <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 mb-5">
-            <canvas ref={canvasRef} className="" width="900px" height="900px" />
-          </div>
-          <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 mb-5">
-            <h1 className="text-2xl text-center font-bold">Options</h1>
-            <div className="grid grid-cols-3 gap-4 w-full mb-5">
-              <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                onClick={runKruskal}
-              >
-                Get MST (Kruskal-algorithm)
-              </button>
-              <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                onClick={runPrim}
-              >
-                Get MST (Prim-algorithm)
-              </button>
-              <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                onClick={runMeanDistance}
-              >
-                Get mean distance
-              </button>
-            </div>
-            <div className="grid grid-cols-3 gap-4 w-full mb-5">
-              <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                onClick={runConnectedComponents}
-              >
-                Connected components
-              </button>
-            </div>
-          </div>
-          <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 mb-5">
-            <h1 className="text-2xl text-center font-bold">Search</h1>
-            <div className="flex flex-col items-center p-5 mb-5">
-              <div className="grid grid-cols-1 gap-4 mb-5">
-                <label className="flex items-center cursor-pointer">
-                  <div className="relative">
-                    <input
-                      placeholder="End node"
-                      type="text"
-                      className="border-2 border-gray-500"
-                      value={endNode || ""}
-                      onChange={(e) => {
-                        setEndNode(e.target.value || null);
-                      }}
-                    />
-                  </div>
-                </label>
-              </div>
-
-              <div className="grid grid-cols-1 gap-4 w-full">
-                <button
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                  onClick={() => {
-                    try {
-                      const BFSgraph = runBFS();
-                      const DFSgraph = runDFS();
-                      if (canvasBFSRef.current && canvasDFSRef.current) {
-                        const d1 = new GraphDrawer(
-                          BFSgraph,
-                          canvasBFSRef.current,
-                          seed,
-                          true
-                        );
-                        const d2 = new GraphDrawer(
-                          DFSgraph,
-                          canvasDFSRef.current,
-                          seed,
-                          true
-                        );
-                        d1.start();
-                        d2.start();
-                      }
-                    } catch (error) {
-                      setMessage(error.message);
-                    }
-                  }}
-                >
-                  BFS (Breadth-first search) and DFS (Depth-first search)
-                </button>
-              </div>
-              <div className="grid grid-cols-2 gap-4 w-full mt-5">
-                <canvas ref={canvasBFSRef} width="400px" height="400px" />
-                <canvas ref={canvasDFSRef} width="400px" height="400px" />
-              </div>
-            </div>
-            <div className="flex flex-row gap-8 items-center bg-white shadow-xl rounded-lg p-5 mb-5">
-              <textarea
-                className="font-mono w-[90%] h-[300px] border-2 border-gray-500 p-2 focus:outline-none text-xl"
-                value={bfs}
-                readOnly
-              ></textarea>
-              <textarea
-                className="font-mono w-[90%] h-[300px] border-2 border-gray-500 p-2 focus:outline-none text-xl"
-                value={dfs}
-                readOnly
-              ></textarea>
-            </div>
           </div>
         </section>
       </article>
