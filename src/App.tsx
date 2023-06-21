@@ -464,7 +464,7 @@ const App = () => {
         >
           <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 mb-5">
             <div className="flex flex-row w-full px-5 pb-2 justify-between items-center">
-              <h1 className="text-2xl text-center font-bold">
+              <h1 className="flex-grow text-2xl text-center font-bold">
                 Adjacency matrix
               </h1>
               <button
@@ -555,28 +555,30 @@ const App = () => {
             ></textarea>
           </div>
           <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5 mb-5">
-            <div className="flex flex-row justify-between gap-2">
+            <div className="flex flex-row justify-between items-center gap-4 px-4 pb-2">
               <h1 className="text-2xl text-center font-bold">Shortest path</h1>
-              <input
-                placeholder="Source node"
-                type="text"
-                className="flex-auto border-2 border-gray-500"
-                value={sourceNode || ""}
-                onChange={(e) => {
-                  setSourceNode(e.target.value || null);
-                }}
-              />
-              <input
-                placeholder="Target node"
-                type="text"
-                className="border-2 border-gray-500"
-                value={targetNode || ""}
-                onChange={(e) => {
-                  setTargetNode(e.target.value || null);
-                }}
-              />
+              <div className="w-[100px]">
+                <input
+                  placeholder="Source node"
+                  type="text"
+                  className="w-[100px] border-2 border-gray-500"
+                  value={sourceNode || ""}
+                  onChange={(e) => {
+                    setSourceNode(e.target.value || null);
+                  }}
+                />
+                <input
+                  placeholder="Target node"
+                  type="text"
+                  className="w-[100px] border-2 border-gray-500"
+                  value={targetNode || ""}
+                  onChange={(e) => {
+                    setTargetNode(e.target.value || null);
+                  }}
+                />
+              </div>
               <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded max-h-[2.5rem]"
                 onClick={runShortestPath}
               >
                 Run
