@@ -4,6 +4,8 @@ import { RoughCanvas } from "roughjs/bin/canvas";
 import { Graph } from "../../graph";
 import { GNode } from "../../node";
 import { FruchtermanReingold } from "./fruchterman-reingold";
+import { getRandColor } from "../../../utils/color";
+import { Edge } from "../../edge";
 
 export class GraphDrawer {
   private graph: Graph<string>;
@@ -125,7 +127,7 @@ export class GraphDrawer {
     await new Promise((resolve) => setTimeout(resolve, 120));
   }
 
-  public setGraph(graph: Graph<T>) {
+  public setGraph(graph: Graph<string>) {
     this.graph = graph;
   }
 }
