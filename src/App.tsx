@@ -290,41 +290,45 @@ const App = () => {
         </header>
 
         {/* OPERATION MODE & INPUT DATA */}
-        <section className="grid grid-cols-3 gap-4 w-full mb-5">
-          <div className="flex flex-col items-center bg-white shadow-xl rounded-lg p-5">
-            <h2 className="text-3xl text-center font-bold">Operation mode</h2>
-            <div className="w-full mx-auto flex flex-row justify-center items-center">
-              {/* Check box slider */}
+        <section className="grid grid-cols-2 gap-4 w-full mb-5">
+          <div className="flex flex-col items-center justify-around bg-white shadow-xl rounded-lg p-5">
+            <div className="flex flex-row w-full justify-around items-center">
+              <h2 className="text-2xl text-center font-bold">Operation mode</h2>
 
-              <label className="flex items-center cursor-pointer flex-row">
-                <label className="mx-2">String</label>
-                {/* toggle */}
-                <div className="relative">
-                  {/* input */}
+              <div className="flex flex-row justify-center items-center">
+                {/* Check box slider */}
 
-                  <input
-                    type="checkbox"
-                    id="toggle"
-                    className="sr-only"
-                    onChange={(e) => {
-                      setModoDeOperacao(
-                        e.target.checked ? "string" : "arquivo"
-                      );
-                    }}
-                  />
+                <label className="flex items-center cursor-pointer flex-row">
+                  <label className="mx-2 text-xl">String</label>
+                  {/* toggle */}
+                  <div className="relative">
+                    {/* input */}
 
-                  {/* line */}
-                  <div className="block bg-gray-900 w-14 h-8 rounded-full"></div>
-                  {/* dot */}
-                  <div
-                    className={`dot absolute ${
-                      mododeOperacao === "string" ? "left-1" : "right-1"
-                    } top-1 bg-white w-6 h-6 rounded-full transition ease-in-out`}
-                  />
-                </div>
-                <label className="mx-2">Arquivo</label>
-              </label>
+                    <input
+                      type="checkbox"
+                      id="toggle"
+                      className="sr-only"
+                      onChange={(e) => {
+                        setModoDeOperacao(
+                          e.target.checked ? "string" : "arquivo"
+                        );
+                      }}
+                    />
+
+                    {/* line */}
+                    <div className="block bg-gray-900 w-14 h-8 rounded-full"></div>
+                    {/* dot */}
+                    <div
+                      className={`dot absolute ${
+                        mododeOperacao === "string" ? "left-1" : "right-1"
+                      } top-1 bg-white w-6 h-6 rounded-full transition ease-in-out`}
+                    />
+                  </div>
+                  <label className="mx-2 text-xl">Arquivo</label>
+                </label>
+              </div>
             </div>
+
             {/* LOAD AND SAVE BUTTONS */}
             <div className="flex flex-row w-full gap-4 items-center justify-center rounded-lg p-5">
               <button
@@ -357,7 +361,7 @@ const App = () => {
               </>
             ) : (
               <>
-                <h2 className="text-3xl text-center font-bold">Arquivo</h2>
+                <h2 className="text-2xl text-center font-bold">Arquivo</h2>
                 <div className="w-full h-[100px] flex justify-center items-center">
                   <input
                     type="file"
