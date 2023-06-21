@@ -1,130 +1,98 @@
 import { Graph } from "./graph";
 import { GNode } from "./node";
 
-export class Dijkstra<T> {
-  private graph: Graph<T>;
-  private distances: Map<T, number> = new Map<T, number>();
-  private previous: Map<T, GNode<T> | null> = new Map<T, GNode<T> | null>();
+export class Dijkstra {
+  private graph: Graph<string>;
+  private distances: Map<string, number> = new Map<string, number>();
+  private previous: Map<string, GNode<string> | null> = new Map<
+    string,
+    GNode<string> | null
+  >();
+  private startNode: string;
+  private endNode: string;
 
-  constructor(graph: Graph<T>) {
+  constructor(graph: Graph<string>, startNode: string, endNode: string) {
     this.graph = graph;
+    this.startNode = startNode;
+    this.endNode = endNode;
   }
 
-  public findShortestPath(
-    source: T,
-    target: T
-  ): { distance: number; path: T[] } {
-    // Check if weights are non-negative
-    if (!this.checkNonNegativeWeights()) {
-      throw new Error("Graph contains negative weights.");
-    }
-
-    // Initialize data structures
-    this.distances = new Map<T, number>();
-    this.previous = new Map<T, GNode<T> | null>();
-    const unvisited: Set<GNode<T>> = new Set<GNode<T>>();
-
-    // Set initial distances and previous nodes
+  private initialize(): void {
     for (const node of this.graph.getNodes()) {
-      if (node.data === source) {
-        this.distances.set(node.data, 0);
-      } else {
-        this.distances.set(node.data, Infinity);
-      }
+      this.distances.set(node.data, Infinity);
       this.previous.set(node.data, null);
-      unvisited.add(node);
     }
-    console.log(this.previous);
-    console.log(this.distances);
+    this.distances.set(this.startNode, 0);
+  }
+
+  private getSmallestNode(unvisited: Set<string>): string | null {
+    let smallestNode: string | null = null;
+    for (const node of unvisited) {
+      if (
+        !smallestNode ||
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        this.distances.get(node)! < this.distances.get(smallestNode)!
+      ) {
+        smallestNode = node;
+      }
+    }
+    return smallestNode;
+  }
+
+  private relaxNeighbors(node: GNode<string>): void {
+    const neighbors = this.graph.getNeighbors(node.data);
+    for (const neighbor of neighbors) {
+        const a = this.distances.get(node.data) || 0
+        const neighborNode = this.graph.getNode(neighbor) || new GNode<string>('')
+        const b = node.getWeight(neighborNode) || 0
+        const distance = a + b;
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      if (distance < this.distances.get(neighbor)! || 0) {
+        this.distances.set(neighbor, distance);
+        this.previous.set(neighbor, node);
+      }
+    }
+  }
+
+  public findShortestPath(): [string[], Graph<string>] {
+    this.initialize();
+    const unvisited = new Set<string>(
+      this.graph.getNodes().map((node) => node.data)
+    );
 
     while (unvisited.size > 0) {
-      // Find the node with the minimum distance
-      const currentNode = this.getMinDistanceNode(unvisited);
-      unvisited.delete(currentNode);
-
-      // Check if we have reached the target node
-      if (currentNode.data === target) {
-        return this.buildPath(currentNode);
+      const smallestNode = this.getSmallestNode(unvisited);
+      if (!smallestNode || smallestNode === this.endNode) {
+        break;
       }
-
-      // Calculate the tentative distance for each neighbor
-      for (const neighbor of currentNode.getNeighbors()) {
-        const currentDistance =
-          this.distances.get(currentNode.data) || Infinity;
-        const edgeWeight = this.graph.getWeight(currentNode, neighbor);
-        const neighborDistance = this.distances.get(neighbor.data) || Infinity;
-        const tentativeDistance = currentDistance + edgeWeight;
-
-        if (tentativeDistance < neighborDistance) {
-          this.distances.set(neighbor.data, tentativeDistance);
-          this.previous.set(neighbor.data, currentNode);
-        }
+      unvisited.delete(smallestNode);
+      const node = this.graph.getNode(smallestNode);
+      if (node) {
+        this.relaxNeighbors(node);
       }
     }
 
-    throw new Error("Path not found.");
-  }
+    const path: string[] = [];
+    let currentNode = this.endNode;
+    while (currentNode !== this.startNode) {
+      path.unshift(currentNode);
+      currentNode = this.previous.get(currentNode)?.data || "";
+    }
+    path.unshift(this.startNode);
 
-  public findShortestPathFromNode(
-    source: T
-  ): Map<T, { distance: number; path: T[] }> {
-    const result = new Map<T, { distance: number; path: T[] }>();
-
+    const pathTree = new Graph<string>();
     for (const node of this.graph.getNodes()) {
-      try {
-        const path = this.findShortestPath(source, node.data);
-        result.set(node.data, path);
-      } catch (e) {
-        continue;
+      pathTree.addNode(node.data);
+    }
+    for (const [node, prev] of this.previous) {
+      if (prev) {
+        // get the node form the graph
+        const g_node = this.graph.getNode(node);
+        const weight = g_node?.getWeight(prev) || 0;
+        pathTree.addEdge(prev.data, node, weight);
       }
     }
 
-    return result;
-  }
-
-  private checkNonNegativeWeights(): boolean {
-    const edges = this.graph.getEdges();
-
-    for (const edge of edges) {
-      if (edge.weight < 0) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  private getMinDistanceNode(nodes: Set<GNode<T>>): GNode<T> {
-    let minNode: GNode<T> | null = null;
-    let minDistance = Infinity;
-
-    for (const node of nodes) {
-      const distance = this.distances.get(node.data) || Infinity;
-      console.log(distance + " " + node.data + " " + minDistance);
-      if (distance < minDistance) {
-        minNode = node;
-        minDistance = distance;
-      }
-    }
-
-    if (minNode === null) {
-      throw new Error("Min distance node not found.");
-    }
-
-    return minNode;
-  }
-
-  private buildPath(targetNode: GNode<T>): { distance: number; path: T[] } {
-    const path: T[] = [];
-    let currentNode: GNode<T> | null = targetNode;
-
-    while (currentNode !== null) {
-      path.unshift(currentNode.data);
-      currentNode = this.previous.get(currentNode.data);
-    }
-
-    const distance = this.distances.get(targetNode.data) || 0;
-
-    return { distance, path };
+    return [path, pathTree];
   }
 }
