@@ -213,19 +213,58 @@ const App = () => {
     } else if (!source || !target) {
       setMessage("Source and target nodes are required");
     } else {
+      let output = "";
       if (graph.areWeightsEqual()) {
-        console.log("Weights are equal, using BFS");
+        // BFS
+        output += "Graph is non-weighted, using BFS\n\n";
         const bfsPath = new BFSPath(graph, source, target);
         const [path, pathTree] = bfsPath.findShortestPath();
-        console.log("Shortest path:", path.join(" -> "));
+        output += "Shortest path:\n" + path.join(" → ");
       } else {
-        // Create an instance of Dijkstra
+        // Dijkstra
+        output += "Graph is weighted, using Dijkstra\n\n";
         const dijkstra = new Dijkstra(graph, source, target);
-        // Find the shortest path between two nodes
         const [path, pathTree] = dijkstra.findShortestPath();
-        console.log("Shortest path:", path.join(" -> "));
+        output += "Shortest path:\n" + path.join(" → ");
+      }
+      return output;
+    }
+  };
+  const runAllShortestPaths = () => {
+    if (!graph) {
+      setMessage("No graph to get shortest path");
+      return;
+    }
+    const source = sourceNode;
+
+    if (!source) {
+      setMessage("Source node is required");
+      return;
+    }
+
+    const nodes = graph
+      .getNodes()
+      .map((node) => node.data)
+      .sort();
+    let output = "Shortest paths to all nodes:\n";
+    if (graph.areWeightsEqual()) {
+      // BFS
+      for (const node of nodes) {
+        if (node == source) continue;
+        const bfsPath = new BFSPath(graph, source, node);
+        const [path, pathTree] = bfsPath.findShortestPath();
+        output += `(${node}) ${path.join(" → ")}\n`;
+      }
+    } else {
+      // Dijkstra
+      for (const node of nodes) {
+        if (node == source) continue;
+        const dijkstra = new Dijkstra(graph, source, node);
+        const [path, pathTree] = dijkstra.findShortestPath();
+        output += `(${node}) ${path.join(" → ")}\n`;
       }
     }
+    return output;
   };
 
   useEffect(() => {
@@ -591,7 +630,11 @@ const App = () => {
               </div>
               <button
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded max-h-[2.5rem]"
-                onClick={runShortestPath}
+                onClick={() => {
+                  setShortestPath(
+                    runShortestPath() + "\n\n" + runAllShortestPaths()
+                  );
+                }}
               >
                 Run
               </button>
