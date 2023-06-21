@@ -1,4 +1,5 @@
-import { Graph } from "./graph";
+import { Graph } from "../../graph";
+
 
 export class GraphLoader {
   public loadFromText(text: string): Graph<string> {

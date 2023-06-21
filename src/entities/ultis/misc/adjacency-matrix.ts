@@ -1,8 +1,6 @@
-import { Graph } from "./graph";
-import type { GNode } from "./node";
-
+import { Graph } from "../../graph";
+import { GNode } from "../../node";
 // Generate adjacency matrix from graph
-
 export class AdjacencyMatrix<T> {
   private graph: Graph<T>;
   private matrix: number[][];

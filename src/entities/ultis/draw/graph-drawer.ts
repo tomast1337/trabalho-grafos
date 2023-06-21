@@ -1,11 +1,9 @@
 import { RandomSeed, create } from "random-seed";
 import rough from "roughjs";
 import { RoughCanvas } from "roughjs/bin/canvas";
-import { getRandColor } from "../utils/color";
-import { Edge } from "./edge";
+import { Graph } from "../../graph";
+import { GNode } from "../../node";
 import { FruchtermanReingold } from "./fruchterman-reingold";
-import { Graph } from "./graph";
-import { GNode } from "./node";
 
 export class GraphDrawer {
   private graph: Graph<string>;

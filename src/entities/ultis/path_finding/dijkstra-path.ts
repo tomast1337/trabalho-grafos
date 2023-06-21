@@ -1,5 +1,5 @@
-import { Graph } from "./graph";
-import { GNode } from "./node";
+import { Graph } from "../../graph";
+import { GNode } from "../../node";
 
 export class Dijkstra {
   private graph: Graph<string>;
@@ -42,10 +42,11 @@ export class Dijkstra {
   private relaxNeighbors(node: GNode<string>): void {
     const neighbors = this.graph.getNeighbors(node.data);
     for (const neighbor of neighbors) {
-        const a = this.distances.get(node.data) || 0
-        const neighborNode = this.graph.getNode(neighbor) || new GNode<string>('')
-        const b = node.getWeight(neighborNode) || 0
-        const distance = a + b;
+      const a = this.distances.get(node.data) || 0;
+      const neighborNode =
+        this.graph.getNode(neighbor) || new GNode<string>("");
+      const b = node.getWeight(neighborNode) || 0;
+      const distance = a + b;
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       if (distance < this.distances.get(neighbor)! || 0) {
         this.distances.set(neighbor, distance);

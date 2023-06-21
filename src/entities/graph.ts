@@ -1,5 +1,5 @@
-import { GNode } from "./node";
 import { Edge } from "./edge";
+import { GNode } from "./node";
 export class Graph<T> {
   nodes: Map<T, GNode<T>>;
 

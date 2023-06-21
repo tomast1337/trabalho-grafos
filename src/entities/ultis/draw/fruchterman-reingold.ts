@@ -1,4 +1,4 @@
-import { Graph } from "./graph";
+import { Graph } from "../../graph";
 
 export class FruchtermanReingold<T> {
   private graph: Graph<T>;
